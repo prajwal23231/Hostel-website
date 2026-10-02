@@ -3,6 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      // Guarantee page always resets to top on fresh load or reload
+      if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+      }
+      window.scrollTo(0, 0);
+    </script>
     <title>Khaosan Poshtel | Tropical Party Hostel - Experience Bangkok</title>
     <meta name="description" content="Discover Khaosan Poshtel, Bangkok's premier tropical boutique party hostel nestled near vibrant Khaosan Road. An unforgettable oasis blending tropical relaxation and lively social vibes." />
     <link rel="preconnect" href="https://fonts.googleapis.com">

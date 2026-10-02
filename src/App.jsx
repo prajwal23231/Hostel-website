@@ -1,15 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 
+// Force manual scroll restoration so any reload/refresh immediately starts at the top
+if (typeof window !== 'undefined' && 'scrollRestoration' in history) {
+  history.scrollRestoration = 'manual';
+}
+
 // Authentic project assets located under public/
 const VIDEO_SRC = '/videos/khaosan-tropical.mp4';
 const POSTER_SRC = '/images/poster.jpg';
 const LOGO_SRC = '/images/khaosan-logo.png';
 const ARTWORK_CARD_SRC = '/images/khaosan-artwork-card.jpg';
-const COMPANY_CARD_SRC = '/images/khaosan-company-card.jpg';
-const GALLERY_HORIZON_SRC = '/images/gallery-tropical-horizon.jpg';
-const GALLERY_PALM_SRC = '/images/gallery-palm-breeze.jpg';
-const GALLERY_SAND_SRC = '/images/gallery-golden-sand.jpg';
 
 // Video timing constants from frame-level analysis:
 // 0.0s - 0.35s: Warm-beige opening frame.
@@ -36,7 +37,7 @@ export default function App() {
   const loaderContainerRef = useRef(null);
   const animStartedRef = useRef(false);
 
-  // Opening animation: Centered logo smoothly transitions into the header logo position
+  // Opening animation: Centered logo smoothly transitions into the header logo position with a slower, cinematic pace
   const runOpeningAnimation = () => {
     if (animStartedRef.current) return;
     animStartedRef.current = true;
@@ -85,44 +86,32 @@ export default function App() {
     const scaleFactor = targetRect.width / currentRect.width;
 
     const tl = gsap.timeline({
-      delay: 0.35, // Align precisely with video reveal
-      defaults: { ease: 'power3.inOut' },
+      delay: 0.55, // Graceful pause before starting movement
+      defaults: { ease: 'power2.inOut' },
       onComplete: () => {
         setIsTransitionDone(true);
       },
     });
 
-    // Animate floating logo into the exact header logo slot
+    // Slower, graceful scale-down and glide into the top-left position (2.6s duration)
     tl.to(floatingEl, {
       x: deltaX,
       y: deltaY,
       scale: scaleFactor,
-      duration: 1.6,
+      duration: 2.6,
       force3D: true,
     })
-      // Reveal header navigation links & booking CTA as logo approaches destination
-      .to(
-        '.header-fade-in',
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.7,
-          stagger: 0.08,
-          ease: 'power2.out',
-        },
-        '-=0.6'
-      )
-      // Reveal hero headline, copy, and booking buttons
+      // Reveal hero headline, copy, and booking buttons as logo approaches destination
       .to(
         '.hero-fade-in',
         {
           opacity: 1,
           y: 0,
-          duration: 0.9,
-          stagger: 0.12,
+          duration: 1.0,
+          stagger: 0.14,
           ease: 'power2.out',
         },
-        '-=0.7'
+        '-=1.0'
       );
   };
 
@@ -259,14 +248,13 @@ export default function App() {
 
   // Track scroll position to ensure sticky header displays beautifully on manual scroll
   useEffect(() => {
+    // Reset to top immediately on mount
+    window.scrollTo(0, 0);
+
     const handleScroll = () => {
-      if (window.scrollY > 20) {
-        setIsScrolled(true);
-        gsap.set('.header-fade-in', { opacity: 1, y: 0 });
-      } else {
-        setIsScrolled(false);
-      }
+      setIsScrolled(window.scrollY > 40);
     };
+
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -283,13 +271,13 @@ export default function App() {
   return (
     <div className="min-h-screen w-full bg-[#F8F5EE] text-[#16373F] font-sans antialiased selection:bg-[#E7D4B3] selection:text-[#16373F]">
       {/* =========================================================================
-          1. HEADER (Boutique Deep Tropical Green with Warm Beige Accents & Navigation)
+          1. HEADER (Translucent Frosted Glass, Invisible at Top, Appears on Scroll)
           ========================================================================= */}
       <header
         className={`fixed top-0 left-0 right-0 z-40 transition-all duration-500 ${
-          isTransitionDone || isScrolled
-            ? 'bg-[#16373F]/95 backdrop-blur-md border-b border-[#E7D4B3]/30 shadow-lg shadow-[#16373F]/20'
-            : 'bg-transparent border-transparent'
+          isScrolled
+            ? 'bg-[#16373F]/65 backdrop-blur-md sm:backdrop-blur-lg border-b border-[#E7D4B3]/25 shadow-lg shadow-[#16373F]/15 py-0'
+            : 'bg-transparent border-transparent shadow-none py-1.5'
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
@@ -308,8 +296,8 @@ export default function App() {
               <img
                 src={LOGO_SRC}
                 alt="The Khaosan Poshtel"
-                className={`w-full h-full object-contain transition-opacity duration-300 ${
-                  isTransitionDone || isScrolled ? 'opacity-100' : 'opacity-0'
+                className={`w-full h-full object-contain transition-opacity duration-500 ${
+                  isTransitionDone ? 'opacity-100' : 'opacity-0'
                 }`}
                 draggable={false}
               />
@@ -318,47 +306,60 @@ export default function App() {
             {/* Brand Typography */}
             <div
               className={`flex flex-col transition-opacity duration-500 ${
-                isTransitionDone || isScrolled ? 'opacity-100' : 'opacity-0'
+                isTransitionDone ? 'opacity-100' : 'opacity-0'
               }`}
             >
-              <span className="font-display font-bold tracking-wider text-base sm:text-lg text-[#E7D4B3] leading-tight group-hover:text-[#FAF8F5] transition-colors">
+              <span className="font-display font-bold tracking-wider text-base sm:text-lg text-[#E7D4B3] leading-tight group-hover:text-[#FAF8F5] transition-colors drop-shadow-sm">
                 THE KHAOSAN POSHTEL
               </span>
-              <span className="font-sans text-[10px] tracking-widest uppercase text-[#E7D4B3]/75 font-medium">
+              <span className="font-sans text-[10px] tracking-widest uppercase text-[#E7D4B3]/80 font-medium drop-shadow-xs">
                 Bangkok · Boutique Hostel
               </span>
             </div>
           </a>
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-8" aria-label="Main Navigation">
-            {['About', 'Stay', 'Experience', 'Location', 'Gallery'].map((item) => (
+          {/* Desktop Navigation Links: Invisible at first, appear when scrolled down */}
+          <nav
+            className={`hidden md:flex items-center gap-8 transition-all duration-500 ${
+              isScrolled
+                ? 'opacity-100 translate-y-0 pointer-events-auto'
+                : 'opacity-0 -translate-y-2 pointer-events-none'
+            }`}
+            aria-label="Main Navigation"
+          >
+            {['About', 'Stay', 'Experience', 'Location'].map((item) => (
               <a
                 key={item}
                 href={`#${item.toLowerCase()}`}
-                className="header-fade-in opacity-0 font-medium text-sm tracking-wide text-[#E7D4B3]/85 hover:text-[#FAF8F5] transition-colors duration-200 relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#E7D4B3] hover:after:w-full after:transition-all after:duration-300"
+                className="font-medium text-sm tracking-wide text-[#E7D4B3]/90 hover:text-[#FAF8F5] transition-colors duration-200 relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#E7D4B3] hover:after:w-full after:transition-all after:duration-300"
               >
                 {item}
               </a>
             ))}
           </nav>
 
-          {/* Header CTA Button */}
-          <div className="hidden md:flex items-center">
+          {/* Header CTA Button: Invisible at first, appears when scrolled down */}
+          <div
+            className={`hidden md:flex items-center transition-all duration-500 ${
+              isScrolled
+                ? 'opacity-100 translate-y-0 pointer-events-auto'
+                : 'opacity-0 -translate-y-2 pointer-events-none'
+            }`}
+          >
             <a
               href="#book"
-              className="header-fade-in opacity-0 inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-[#E7D4B3] text-[#16373F] text-sm font-semibold tracking-wide shadow-sm hover:bg-[#FAF8F5] hover:shadow-md active:scale-98 transition-all duration-200"
+              className="inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-[#E7D4B3] text-[#16373F] text-sm font-semibold tracking-wide shadow-sm hover:bg-[#FAF8F5] hover:shadow-md active:scale-98 transition-all duration-200"
             >
               Book Your Stay
             </a>
           </div>
 
-          {/* Mobile Menu Toggle Button */}
+          {/* Mobile Menu Toggle Button: Active when scrolled */}
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className={`md:hidden p-2 rounded-lg text-[#E7D4B3] hover:bg-[#E7D4B3]/15 transition-all ${
-              isTransitionDone || isScrolled ? 'opacity-100' : 'opacity-0 pointer-events-none'
+            className={`md:hidden p-2 rounded-lg text-[#E7D4B3] hover:bg-[#E7D4B3]/15 transition-all duration-300 ${
+              isScrolled ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
             }`}
             aria-label="Toggle navigation menu"
             aria-expanded={mobileMenuOpen}
@@ -374,10 +375,10 @@ export default function App() {
         </div>
 
         {/* Mobile Navigation Drawer */}
-        {mobileMenuOpen && (
-          <div className="md:hidden bg-[#16373F] border-b border-[#E7D4B3]/30 px-6 py-6 shadow-2xl animate-in slide-in-from-top-4 duration-200">
+        {mobileMenuOpen && isScrolled && (
+          <div className="md:hidden bg-[#16373F]/90 backdrop-blur-lg border-b border-[#E7D4B3]/30 px-6 py-6 shadow-2xl animate-in slide-in-from-top-4 duration-200">
             <div className="flex flex-col space-y-4">
-              {['About', 'Stay', 'Experience', 'Location', 'Gallery'].map((item) => (
+              {['About', 'Stay', 'Experience', 'Location'].map((item) => (
                 <a
                   key={item}
                   href={`#${item.toLowerCase()}`}
@@ -863,192 +864,135 @@ export default function App() {
       </section>
 
       {/* =========================================================================
-          6. LOCATION SECTION (Exact supplied address & confirmed company entity)
+          6. LOCATION SECTION (Interactive Google Map & Authentic Address Details)
           ========================================================================= */}
       <section id="location" className="py-24 sm:py-32 bg-[#F2ECE1] border-t border-[#E7D4B3]/40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-            {/* Official Credentials Card from assets */}
-            <div className="lg:col-span-6">
-              <div className="bg-[#FFFFFF] rounded-2xl p-6 sm:p-8 shadow-elevated border border-[#E7D4B3]/60">
-                <span className="text-xs font-bold tracking-widest uppercase text-[#2A5542] block mb-2">
-                  Official Property Record
-                </span>
-                <h3 className="font-display text-2xl font-bold text-[#16373F] mb-4">
-                  The Khaosan Poshtel
-                </h3>
+          <div className="max-w-3xl mb-12">
+            <span className="text-xs font-bold tracking-widest uppercase text-[#2A5542] block mb-3">
+              Location & Map
+            </span>
+            <h2 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-[#16373F]">
+              Find Us on Soi Rambuttri, Bangkok
+            </h2>
+            <div className="w-16 h-1 bg-[#E7D4B3] mt-4 mb-4 rounded-full" />
+            <p className="text-base text-[#16373F]/80 leading-relaxed font-normal">
+              Located at 92 Soi Rambutri in historic Phra Nakhon, Bangkok. Explore the interactive map below for our exact pinpoint and transit routes.
+            </p>
+          </div>
 
-                <div className="rounded-xl overflow-hidden mb-6 border border-[#E7D4B3]/40 shadow-xs">
-                  <img
-                    src={COMPANY_CARD_SRC}
-                    alt="The Khaosan Poshtel Official Address and Company Information"
-                    className="w-full h-auto object-cover"
-                  />
-                </div>
-
-                <div className="space-y-3 text-sm text-[#16373F]/85 border-t border-[#E7D4B3]/40 pt-5">
-                  <div className="flex items-start gap-3">
-                    <svg className="w-5 h-5 text-[#2A5542] flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch">
+            {/* Interactive Google Map Embed */}
+            <div className="lg:col-span-7 flex flex-col">
+              <div className="relative w-full h-[400px] sm:h-[480px] rounded-2xl overflow-hidden border border-[#E7D4B3]/60 shadow-elevated group bg-[#E4D0AD]">
+                <iframe
+                  title="The Khaosan Poshtel Location Map"
+                  src="https://maps.google.com/maps?q=92+Soi+Rambutri,+Talat+Yot,+Phra+Nakhon,+Bangkok+10200&t=&z=16&ie=UTF8&iwloc=&output=embed"
+                  className="w-full h-full border-0 filter saturate-95 contrast-105"
+                  allowFullScreen=""
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+                {/* Floating Map Action Badge */}
+                <div className="absolute bottom-4 right-4 z-10">
+                  <a
+                    href="https://www.google.com/maps/search/?api=1&query=92+Soi+Rambutri,+Talat+Yot,+Phra+Nakhon,+Bangkok+10200"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#16373F]/90 backdrop-blur-md text-[#E7D4B3] hover:text-[#FAF8F5] text-xs font-semibold shadow-lg hover:bg-[#16373F] active:scale-98 transition-all"
+                  >
+                    <span>Open in Google Maps</span>
+                    <svg className="w-3.5 h-3.5 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="2">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                     </svg>
-                    <div>
-                      <p className="font-semibold text-[#16373F]">Address:</p>
-                      <p className="text-sm text-[#63787D]">
-                        92 Soi Rambutri, Talat Yot, Phra Nakhon, Bangkok 10200
-                      </p>
-                      <p className="text-xs text-[#63787D] mt-0.5">
-                        (Talat Yot Subdistrict, Phra Nakhon District)
-                      </p>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* Address & Credentials Info Column */}
+            <div className="lg:col-span-5 flex flex-col justify-between">
+              <div className="bg-[#FFFFFF] rounded-2xl p-6 sm:p-8 shadow-elevated border border-[#E7D4B3]/60 h-full flex flex-col justify-between">
+                <div>
+                  <span className="text-xs font-bold tracking-widest uppercase text-[#2A5542] block mb-2">
+                    Property Address & Entity
+                  </span>
+                  <h3 className="font-display text-2xl font-bold text-[#16373F] mb-6">
+                    The Khaosan Poshtel
+                  </h3>
+
+                  <div className="space-y-5 text-sm text-[#16373F]/85 border-t border-[#E7D4B3]/40 pt-5">
+                    <div className="flex items-start gap-3.5">
+                      <div className="w-9 h-9 rounded-full bg-[#E7D4B3]/35 flex items-center justify-center flex-shrink-0 text-[#16373F] mt-0.5">
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="font-semibold text-[#16373F] text-base">Address</p>
+                        <p className="text-sm text-[#63787D] mt-0.5 font-normal leading-relaxed">
+                          92 Soi Rambutri, Talat Yot, Phra Nakhon, Bangkok 10200
+                        </p>
+                        <p className="text-xs text-[#63787D] mt-0.5">
+                          (Talat Yot Subdistrict, Phra Nakhon District)
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3.5 pt-2 border-t border-[#E7D4B3]/30">
+                      <div className="w-9 h-9 rounded-full bg-[#E7D4B3]/35 flex items-center justify-center flex-shrink-0 text-[#16373F] mt-0.5">
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="font-semibold text-[#16373F] text-base">Operating Entity</p>
+                        <p className="text-sm text-[#63787D] mt-0.5 font-normal leading-relaxed">
+                          RK Hospitality Company Limited
+                        </p>
+                        <p className="text-xs text-[#63787D]">
+                          (RK Hospitality Co., Ltd.)
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3.5 pt-2 border-t border-[#E7D4B3]/30">
+                      <div className="w-9 h-9 rounded-full bg-[#E7D4B3]/35 flex items-center justify-center flex-shrink-0 text-[#16373F] mt-0.5">
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="font-semibold text-[#16373F]">Arrival Note</p>
+                        <p className="text-xs text-[#63787D] mt-0.5 font-normal leading-relaxed">
+                          Show the address in Thai to taxi drivers: <em>92 ซอยรามบุตรี แขวงตลาดยอด เขตพระนคร กรุงเทพมหานคร 10200</em>
+                        </p>
+                      </div>
                     </div>
                   </div>
-
-                  <div className="flex items-start gap-3 pt-2">
-                    <svg className="w-5 h-5 text-[#16373F] flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                    </svg>
-                    <div>
-                      <p className="font-semibold text-[#16373F]">Operating Company:</p>
-                      <p className="text-sm text-[#63787D]">
-                        RK Hospitality Company Limited (RK Hospitality Co., Ltd.)
-                      </p>
-                    </div>
-                  </div>
                 </div>
 
-                <div className="mt-6 pt-5 border-t border-[#E7D4B3]/40 flex flex-wrap gap-3">
+                <div className="mt-8 pt-6 border-t border-[#E7D4B3]/40 flex flex-wrap gap-3">
                   <button
                     onClick={handleCopyAddress}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#E7D4B3]/50 text-[#16373F] hover:bg-[#E7D4B3] text-xs font-semibold transition-colors cursor-pointer"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#16373F] text-[#F8F5EE] hover:bg-[#2A5542] text-xs font-semibold transition-all cursor-pointer shadow-sm active:scale-98"
                   >
                     <svg className="w-4 h-4 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="2">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
                     </svg>
-                    <span>{addressCopied ? 'Address Copied!' : 'Copy Address for Taxi / Map'}</span>
+                    <span>{addressCopied ? 'Address Copied!' : 'Copy Address for Taxi'}</span>
                   </button>
+
+                  <a
+                    href="https://www.google.com/maps/dir/?api=1&destination=92+Soi+Rambutri,+Talat+Yot,+Phra+Nakhon,+Bangkok+10200"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#E7D4B3] text-[#16373F] hover:bg-[#FAF8F5] text-xs font-semibold transition-all shadow-xs active:scale-98"
+                  >
+                    <span>Get Directions &rarr;</span>
+                  </a>
                 </div>
-              </div>
-            </div>
-
-            {/* Neighborhood Narrative Column */}
-            <div className="lg:col-span-6">
-              <span className="text-xs font-bold tracking-widest uppercase text-[#2A5542] block mb-3">
-                Prime Old Town Bangkok
-              </span>
-              <h2 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-[#16373F] mb-6">
-                Charming Soi Rambuttri, Moments from Khaosan
-              </h2>
-
-              <p className="text-base text-[#16373F]/80 leading-relaxed font-normal mb-8">
-                Soi Rambuttri is renowned as the more relaxed, bohemian counterpart to Khaosan Road. Shaded by mature banyan and palm trees, it offers open-air cafes, acoustic music lounges, artisan street carts, and a vibrant international traveler scene right outside our doors.
-              </p>
-
-              <div className="space-y-4">
-                <div className="p-4 rounded-xl bg-[#FFFFFF] border border-[#E7D4B3]/40 shadow-xs">
-                  <h4 className="font-display font-semibold text-sm text-[#16373F] mb-1">
-                    Khaosan Road (2-minute walk)
-                  </h4>
-                  <p className="text-xs text-[#63787D]">
-                    Bangkok's legendary backpacker hub filled with lively night markets, pad thai carts, and electric social energy.
-                  </p>
-                </div>
-
-                <div className="p-4 rounded-xl bg-[#FFFFFF] border border-[#E7D4B3]/40 shadow-xs">
-                  <h4 className="font-display font-semibold text-sm text-[#16373F] mb-1">
-                    Wat Chana Songkhram & Historic Temples (3-minute walk)
-                  </h4>
-                  <p className="text-xs text-[#63787D]">
-                    A serene Ayutthaya-era royal temple offering quiet morning walks, bells, and golden Buddha shrines.
-                  </p>
-                </div>
-
-                <div className="p-4 rounded-xl bg-[#FFFFFF] border border-[#E7D4B3]/40 shadow-xs">
-                  <h4 className="font-display font-semibold text-sm text-[#16373F] mb-1">
-                    Phra Arthit Chao Phraya River Pier (6-minute walk)
-                  </h4>
-                  <p className="text-xs text-[#63787D]">
-                    Hop on the express riverboat for direct scenic transit to the Grand Palace, Wat Arun, and Chinatown.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* =========================================================================
-          7. GALLERY SECTION (Authentic project images & footage stills)
-          ========================================================================= */}
-      <section id="gallery" className="py-24 sm:py-32 bg-[#F8F5EE]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl mx-auto text-center mb-16">
-            <span className="text-xs font-bold tracking-widest uppercase text-[#2A5542] block mb-3">
-              Visual Ambiance
-            </span>
-            <h2 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-[#16373F]">
-              Atmosphere & Tropical Identity
-            </h2>
-            <div className="w-16 h-1 bg-[#E7D4B3] mx-auto mt-4 mb-6 rounded-full" />
-            <p className="text-base text-[#16373F]/80 leading-relaxed font-normal">
-              A curated look into the artwork, credentials, and tropical footage that define The Khaosan Poshtel.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* Gallery Item 1: High-Res Brand Artwork */}
-            <div className="rounded-2xl overflow-hidden shadow-soft bg-[#FFFFFF] border border-[#E7D4B3]/50 group flex flex-col justify-between">
-              <div className="h-68 overflow-hidden bg-[#F2ECE1] flex items-center justify-center p-4">
-                <img
-                  src={ARTWORK_CARD_SRC}
-                  alt="The Khaosan Poshtel Tropical Badge Artwork"
-                  className="w-full h-full object-contain transform group-hover:scale-105 transition-transform duration-500"
-                />
-              </div>
-              <div className="p-5 border-t border-[#E7D4B3]/30">
-                <h4 className="font-display font-semibold text-sm text-[#16373F]">
-                  Brand Emblem & Identity
-                </h4>
-                <p className="text-xs text-[#63787D] mt-1">
-                  Art-directed badge depicting sunset, palm trees, torches, and backpacker spirit.
-                </p>
-              </div>
-            </div>
-
-            {/* Gallery Item 2: Palm Canopy Footage Still */}
-            <div className="rounded-2xl overflow-hidden shadow-soft bg-[#FFFFFF] border border-[#E7D4B3]/50 group flex flex-col justify-between">
-              <div className="h-68 overflow-hidden">
-                <img
-                  src={GALLERY_PALM_SRC}
-                  alt="Lush green palm fronds framing blue skies"
-                  className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
-                />
-              </div>
-              <div className="p-5 border-t border-[#E7D4B3]/30">
-                <h4 className="font-display font-semibold text-sm text-[#16373F]">
-                  Tropical Palm Canopy & Coast
-                </h4>
-                <p className="text-xs text-[#63787D] mt-1">
-                  Natural green foliage and serene coastal light inspiring our courtyard palette.
-                </p>
-              </div>
-            </div>
-
-            {/* Gallery Item 3: Official Brand Record & Location Card */}
-            <div className="rounded-2xl overflow-hidden shadow-soft bg-[#FFFFFF] border border-[#E7D4B3]/50 group flex flex-col justify-between">
-              <div className="h-68 overflow-hidden bg-[#F2ECE1] flex items-center justify-center p-4">
-                <img
-                  src={COMPANY_CARD_SRC}
-                  alt="The Khaosan Poshtel Official Brand Identity and Address"
-                  className="w-full h-full object-contain transform group-hover:scale-105 transition-transform duration-500"
-                />
-              </div>
-              <div className="p-5 border-t border-[#E7D4B3]/30">
-                <h4 className="font-display font-semibold text-sm text-[#16373F]">
-                  Official Property Credentials
-                </h4>
-                <p className="text-xs text-[#63787D] mt-1">
-                  RK Hospitality Company Limited operating record at 92 Soi Rambutri, Bangkok.
-                </p>
               </div>
             </div>
           </div>
@@ -1229,7 +1173,7 @@ export default function App() {
                 Navigation
               </h4>
               <ul className="space-y-2 text-xs">
-                {['About', 'Stay', 'Experience', 'Location', 'Gallery'].map((sec) => (
+                {['About', 'Stay', 'Experience', 'Location'].map((sec) => (
                   <li key={sec}>
                     <a
                       href={`#${sec.toLowerCase()}`}
