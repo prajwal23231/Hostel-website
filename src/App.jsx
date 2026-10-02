@@ -13,11 +13,11 @@ const LOGO_SRC = '/images/khaosan-logo.png';
 const ARTWORK_CARD_SRC = '/images/khaosan-artwork-card.jpg';
 
 // Video timing constants from frame-level analysis:
-// 0.0s - 0.35s: Warm-beige opening frame.
-// 0.35s - 1.85s: Video reveal of the tropical beach scene & leaf entrance.
-// 2.0s - 7.8s: Established tropical beach scene with green leaves swaying naturally.
-const LOOP_START = 2.0;
-const LOOP_END = 7.8;
+// 0.0s - 0.35s: Warm-beige opening frame (played once on initial entrance).
+// 0.35s - 1.85s: Video reveal of tropical beach scene & leaf entrance (intro only).
+// 1.9s - 7.65s: Established tropical beach scene with green leaves swaying naturally (continuous seamless loop).
+const LOOP_START = 1.9;
+const LOOP_END = 7.65;
 
 export default function App() {
   const [isTransitionDone, setIsTransitionDone] = useState(false);
@@ -36,6 +36,7 @@ export default function App() {
   const watermarkMaskRef = useRef(null);
   const loaderContainerRef = useRef(null);
   const animStartedRef = useRef(false);
+  const introPassedRef = useRef(false);
 
   // Opening animation: Centered logo smoothly transitions into the header logo position with a slower, cinematic pace
   const runOpeningAnimation = () => {
@@ -140,17 +141,71 @@ export default function App() {
     startPlayback();
   };
 
-  // Video loading & buffering lifecycle with interactive progress coordination
+  // Video loading, buffering lifecycle and bulletproof looping coordination
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
     video.muted = true;
+    let loopRafId = null;
 
+    // Helper: Seek back to loop start (skipping the beige intro) and ensure playback continues
+    const loopVideo = () => {
+      video.currentTime = LOOP_START;
+      if (video.paused) {
+        video.play().catch(console.warn);
+      }
+    };
+
+    // Continuous high-frequency loop monitor via requestAnimationFrame
+    // Catches loop boundary precisely before reaching end-of-file, preventing freeze
+    const checkLoopPlayback = () => {
+      if (video && animStartedRef.current) {
+        if (video.currentTime >= 2.0) {
+          introPassedRef.current = true;
+        }
+
+        // When the established tropical beach scene reaches the loop end, seamlessly cycle
+        if (video.currentTime >= LOOP_END) {
+          loopVideo();
+        } else if (introPassedRef.current && video.currentTime < 1.7 && video.currentTime > 0) {
+          // Never permit re-showing the beige intro or leaf reveal once initial playback began
+          loopVideo();
+        }
+      }
+      loopRafId = requestAnimationFrame(checkLoopPlayback);
+    };
+    loopRafId = requestAnimationFrame(checkLoopPlayback);
+
+    // timeupdate fallback listener
     const handleTimeUpdate = () => {
-      // Loop the established tropical swaying scene once the initial opening has completed
+      if (video.currentTime >= 2.0) {
+        introPassedRef.current = true;
+      }
       if (video.currentTime >= LOOP_END) {
-        video.currentTime = LOOP_START;
+        loopVideo();
+      } else if (introPassedRef.current && video.currentTime < 1.7 && video.currentTime > 0) {
+        loopVideo();
+      }
+    };
+
+    // ended fallback listener: In case background throttling or tab sleep allowed video to hit 8.0s
+    const handleEnded = () => {
+      introPassedRef.current = true;
+      loopVideo();
+    };
+
+    // seeked fallback: Ensure video plays immediately once seek finishes
+    const handleSeeked = () => {
+      if (animStartedRef.current && video.paused && !document.hidden) {
+        video.play().catch(console.warn);
+      }
+    };
+
+    // pause fallback: If paused unexpectedly while document is visible, resume playing
+    const handlePause = () => {
+      if (animStartedRef.current && !document.hidden && !video.ended) {
+        video.play().catch(console.warn);
       }
     };
 
@@ -211,12 +266,15 @@ export default function App() {
 
     video.addEventListener('timeupdate', handleTimeUpdate);
     video.addEventListener('canplay', handleCanPlay);
+    video.addEventListener('ended', handleEnded);
+    video.addEventListener('seeked', handleSeeked);
+    video.addEventListener('pause', handlePause);
 
     if (video.readyState >= 3) {
       setIsVideoLoaded(true);
     }
 
-    // Visibility change handling
+    // Visibility change handling: Pause in background tab, resume smoothly at loop start when returning
     const handleVisibilityChange = () => {
       if (document.hidden) {
         video.pause();
@@ -231,10 +289,16 @@ export default function App() {
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
+      if (loopRafId) {
+        cancelAnimationFrame(loopRafId);
+      }
       clearInterval(progressTimer);
       clearTimeout(autoStartTimer);
       video.removeEventListener('timeupdate', handleTimeUpdate);
       video.removeEventListener('canplay', handleCanPlay);
+      video.removeEventListener('ended', handleEnded);
+      video.removeEventListener('seeked', handleSeeked);
+      video.removeEventListener('pause', handlePause);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       if (floatingLogoRef.current) {
         gsap.killTweensOf(floatingLogoRef.current);
@@ -493,6 +557,12 @@ export default function App() {
           muted
           playsInline
           preload="auto"
+          onEnded={() => {
+            if (videoRef.current) {
+              videoRef.current.currentTime = LOOP_START;
+              videoRef.current.play().catch(console.warn);
+            }
+          }}
           className="hero-video absolute inset-0 z-0 pointer-events-none select-none"
         />
 
