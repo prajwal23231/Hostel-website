@@ -6,6 +6,7 @@
   --poshtel-bg: #F8F5EE;
   --poshtel-teal: #16373F;
   --poshtel-sand: #E7D4B3;
+  --poshtel-green: #2A5542;
 }
 
 html {
@@ -14,11 +15,15 @@ html {
   color: var(--poshtel-teal);
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(216, 199, 168, 0.55) transparent;
 }
 
 body {
   margin: 0;
   padding: 0;
+  width: 100%;
+  max-width: 100%;
   min-height: 100vh;
   background-color: var(--poshtel-bg);
   -webkit-font-smoothing: antialiased;
@@ -26,19 +31,28 @@ body {
   overflow-x: hidden;
 }
 
-/* Elegant boutique custom scrollbar */
+#root {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Elegant boutique custom scrollbar - transparent track so zero right-side spacing or gap appears */
 ::-webkit-scrollbar {
-  width: 7px;
+  width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #F8F5EE;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #D8C7A8;
+  background: rgba(216, 199, 168, 0.55);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #B89058;
+  background: #2A5542;
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
 }
 
 h1, h2, h3, h4, h5, h6 {

@@ -13,10 +13,10 @@ const LOGO_SRC = '/images/khaosan-logo.png';
 const ARTWORK_CARD_SRC = '/images/khaosan-artwork-card.jpg';
 
 // Video timing constants:
-// 0.0s - 2.8s: Opening reveal of tropical beach scene (played once on initial entry).
-// 3.0s - 6.9s: Constant rhythmic swaying leaves loop (loops 1.1s before video ends so leaves never stop moving).
-const LOOP_START = 3.0;
-const LOOP_END = 6.9;
+// 0.0s - 3.5s: Opening reveal of tropical beach scene (played once on initial entry).
+// 3.8s - 7.0s: Smooth rhythmic swaying palm leaves loop (looped between 3.8s and 7.0s as requested).
+const LOOP_START = 3.8;
+const LOOP_END = 7.0;
 
 // Comprehensive Bilingual Content Dictionary (English and Thai)
 const TRANSLATIONS = {
@@ -446,15 +446,15 @@ export default function App() {
       }
     };
 
-    // Continuous loop check: loops at 6.9s (1.1s before end) so leaves never freeze
+    // Continuous loop check: loops between LOOP_START (3.8s) and LOOP_END (7.0s)
     const checkLoopPlayback = () => {
       if (video && animStartedRef.current) {
-        if (video.currentTime >= 3.0) {
+        if (video.currentTime >= LOOP_START) {
           introPassedRef.current = true;
         }
         if (video.currentTime >= LOOP_END) {
           loopVideo();
-        } else if (introPassedRef.current && video.currentTime < 2.8 && video.currentTime > 0) {
+        } else if (introPassedRef.current && video.currentTime < (LOOP_START - 0.5) && video.currentTime > 0) {
           loopVideo();
         }
       }
@@ -463,12 +463,12 @@ export default function App() {
     loopRafId = requestAnimationFrame(checkLoopPlayback);
 
     const handleTimeUpdate = () => {
-      if (video.currentTime >= 3.0) {
+      if (video.currentTime >= LOOP_START) {
         introPassedRef.current = true;
       }
       if (video.currentTime >= LOOP_END) {
         loopVideo();
-      } else if (introPassedRef.current && video.currentTime < 2.8 && video.currentTime > 0) {
+      } else if (introPassedRef.current && video.currentTime < (LOOP_START - 0.5) && video.currentTime > 0) {
         loopVideo();
       }
     };
@@ -565,18 +565,6 @@ export default function App() {
     };
   }, []);
 
-  // Lock scrolling during opening animation so no scrollbar appears and hero remains immersive
-  useEffect(() => {
-    if (!isTransitionDone) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [isTransitionDone]);
-
   // Track scroll position to ensure sticky header displays beautifully on manual scroll
   useEffect(() => {
     // Reset to top immediately on mount
@@ -600,7 +588,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-[#F8F5EE] text-[#16373F] font-sans antialiased selection:bg-[#E7D4B3] selection:text-[#16373F]">
+    <div className="min-h-screen w-full bg-[#F8F5EE] text-[#16373F] font-sans antialiased selection:bg-[#E7D4B3] selection:text-[#16373F] overflow-x-hidden">
       {/* =========================================================================
           1. HEADER (Appears after logo scale-down; translucent bar on scroll; ENG/THAI language toggle)
           ========================================================================= */}
@@ -608,7 +596,7 @@ export default function App() {
         className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 pointer-events-auto ${
           isScrolled
             ? 'bg-[#FAF8F5]/85 backdrop-blur-md border-b border-[#E7D4B3]/50 shadow-sm shadow-[#2D2319]/5 py-0'
-            : 'bg-transparent border-transparent shadow-none py-1.5'
+            : 'bg-gradient-to-b from-[#0A1012]/75 via-[#0A1012]/35 to-transparent border-transparent shadow-none py-1.5'
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
@@ -636,10 +624,22 @@ export default function App() {
 
             {/* Brand Typography */}
             <div className={`flex flex-col header-nav-reveal ${!isTransitionDone ? 'opacity-0 -translate-y-1' : 'opacity-100 translate-y-0'}`}>
-              <span className="font-display font-bold tracking-wider text-base sm:text-lg text-[#2D2319] leading-tight group-hover:text-[#8C6D3B] transition-colors drop-shadow-xs">
+              <span
+                className={`font-display font-bold tracking-wider text-base sm:text-lg leading-tight transition-colors duration-200 ${
+                  isScrolled
+                    ? 'text-[#2D2319] group-hover:text-[#8C6D3B]'
+                    : 'text-[#FAF8F5] drop-shadow-[0_2px_5px_rgba(0,0,0,0.85)] group-hover:text-[#E7D4B3]'
+                }`}
+              >
                 THE KHAOSAN POSHTEL
               </span>
-              <span className="font-sans text-[10px] tracking-widest uppercase text-[#7A6A5C] font-semibold drop-shadow-xs">
+              <span
+                className={`font-sans text-[10px] tracking-widest uppercase font-semibold transition-colors duration-200 ${
+                  isScrolled
+                    ? 'text-[#7A6A5C]'
+                    : 'text-[#E7D4B3] drop-shadow-[0_1px_3px_rgba(0,0,0,0.85)]'
+                }`}
+              >
                 {t.brandSubtitle}
               </span>
             </div>
@@ -659,7 +659,11 @@ export default function App() {
               <a
                 key={item.id}
                 href={`#${item.id}`}
-                className="font-medium text-sm tracking-wide text-[#2D2319] hover:text-[#8C6D3B] transition-colors duration-200 relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#B89058] hover:after:w-full after:transition-all after:duration-300 drop-shadow-xs"
+                className={`font-medium text-sm tracking-wide transition-colors duration-200 relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#2A5542] hover:after:w-full after:transition-all after:duration-300 ${
+                  isScrolled
+                    ? 'text-[#2D2319] hover:text-[#2A5542]'
+                    : 'text-[#FAF8F5] drop-shadow-[0_1px_3px_rgba(0,0,0,0.7)] hover:text-[#E7D4B3]'
+                }`}
               >
                 {item.label}
               </a>
@@ -676,7 +680,7 @@ export default function App() {
                 className={`px-3 py-1 rounded-full text-xs font-semibold tracking-wide transition-all duration-200 cursor-pointer ${
                   language === 'en'
                     ? 'bg-[#2D2319] text-[#FAF8F5] shadow-xs'
-                    : 'text-[#6A5A4D] hover:text-[#2D2319]'
+                    : 'text-[#6A5A4D] hover:text-[#2A5542]'
                 }`}
                 aria-label="Switch language to English"
                 title="English"
@@ -689,7 +693,7 @@ export default function App() {
                 className={`px-3 py-1 rounded-full text-xs font-semibold tracking-wide transition-all duration-200 cursor-pointer ${
                   language === 'th'
                     ? 'bg-[#2D2319] text-[#FAF8F5] shadow-xs'
-                    : 'text-[#6A5A4D] hover:text-[#2D2319]'
+                    : 'text-[#6A5A4D] hover:text-[#2A5542]'
                 }`}
                 aria-label="Switch language to Thai"
                 title="ภาษาไทย"
@@ -701,7 +705,7 @@ export default function App() {
             {/* Header CTA Button */}
             <a
               href="#book"
-              className="inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-[#2D2319] text-[#FAF8F5] text-sm font-semibold tracking-wide shadow-sm hover:bg-[#433527] hover:shadow-md active:scale-98 transition-all duration-200"
+              className="inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-[#2D2319] text-[#FAF8F5] text-sm font-semibold tracking-wide shadow-sm hover:bg-[#2A5542] hover:shadow-md active:scale-98 transition-all duration-200"
             >
               {t.bookStay}
             </a>
@@ -737,7 +741,11 @@ export default function App() {
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-lg text-[#2D2319] hover:bg-[#E7D4B3]/30 transition-colors"
+              className={`p-2 rounded-lg transition-colors ${
+                isScrolled
+                  ? 'text-[#2D2319] hover:bg-[#E7D4B3]/30'
+                  : 'text-[#FAF8F5] hover:bg-white/10'
+              }`}
               aria-label="Toggle navigation menu"
               aria-expanded={mobileMenuOpen}
             >
@@ -766,7 +774,7 @@ export default function App() {
                   key={item.id}
                   href={`#${item.id}`}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="font-display font-medium text-base text-[#2D2319] hover:text-[#8C6D3B] py-2 border-b border-[#E7D4B3]/30"
+                  className="font-display font-medium text-base text-[#2D2319] hover:text-[#2A5542] py-2 border-b border-[#E7D4B3]/30"
                 >
                   {item.label}
                 </a>
@@ -775,7 +783,7 @@ export default function App() {
                 <a
                   href="#book"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full inline-flex items-center justify-center px-5 py-3 rounded-full bg-[#2D2319] text-[#FAF8F5] text-sm font-semibold tracking-wide shadow-md hover:bg-[#433527]"
+                  className="w-full inline-flex items-center justify-center px-5 py-3 rounded-full bg-[#2D2319] text-[#FAF8F5] text-sm font-semibold tracking-wide shadow-md hover:bg-[#2A5542]"
                 >
                   {t.bookStay}
                 </a>
@@ -882,12 +890,12 @@ export default function App() {
           style={{ backgroundImage: `url(${POSTER_SRC})` }}
         />
 
-        {/* Clean, cinematic neutral dark scrim overlay (no muddy beige-green gradient) */}
+        {/* Clean, cinematic neutral dark scrim overlay with darker top for clear brand and header legibility */}
         <div
           className="absolute inset-0 z-10 pointer-events-none"
           style={{
             background:
-              'linear-gradient(180deg, rgba(10, 16, 18, 0.35) 0%, rgba(10, 16, 18, 0.05) 35%, rgba(10, 16, 18, 0.35) 70%, rgba(10, 16, 18, 0.72) 100%)',
+              'linear-gradient(180deg, rgba(10, 16, 18, 0.72) 0%, rgba(10, 16, 18, 0.48) 14%, rgba(10, 16, 18, 0.18) 28%, rgba(10, 16, 18, 0.03) 42%, rgba(10, 16, 18, 0.30) 70%, rgba(10, 16, 18, 0.67) 100%)',
           }}
         />
 
