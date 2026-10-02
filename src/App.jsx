@@ -38,6 +38,8 @@ const TRANSLATIONS = {
     // Hero Section
     heroTag: 'Soi Rambuttri · Bangkok',
     heroHeading: 'A Tropical Sanctuary in Old Town Bangkok',
+    heroHeadingLine1: 'A Tropical Sanctuary in',
+    heroHeadingLine2: 'Old Town Bangkok',
     heroSubheading:
       'Where island serenity meets Bangkok’s historic pulse. Experience thoughtful boutique comfort, lush palm-framed relaxation, and vibrant community steps from Khaosan Road.',
     explorePoshtel: 'Explore The Poshtel',
@@ -169,6 +171,8 @@ const TRANSLATIONS = {
     // Hero Section
     heroTag: 'ซอยรามบุตรี · กรุงเทพมหานคร',
     heroHeading: 'สถานที่พักผ่อนสไตล์ทรอปิคอล ใจกลางพระนคร',
+    heroHeadingLine1: 'สถานที่พักผ่อนสไตล์ทรอปิคอล',
+    heroHeadingLine2: 'ใจกลางพระนคร',
     heroSubheading:
       'สัมผัสความสงบผ่อนคลายท่ามกลางธรรมชาติอันร่มรื่น ผสานเสน่ห์แห่งย่านประวัติศาสตร์กรุงเทพฯ เพียงไม่กี่ก้าวจากถนนข้าวสาร',
     explorePoshtel: 'สำรวจที่พัก',
@@ -565,6 +569,42 @@ export default function App() {
     };
   }, []);
 
+  // Prevent any scrolling during opening animation without changing overflow or causing layout shift
+  useEffect(() => {
+    if (isTransitionDone) return;
+
+    window.scrollTo(0, 0);
+
+    const preventScroll = (e) => {
+      e.preventDefault();
+    };
+
+    const preventKeys = (e) => {
+      const keys = ['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', 'Space', ' '];
+      if (keys.includes(e.key)) {
+        e.preventDefault();
+      }
+    };
+
+    const handleScrollLock = () => {
+      if (!isTransitionDone && window.scrollY > 0) {
+        window.scrollTo(0, 0);
+      }
+    };
+
+    window.addEventListener('wheel', preventScroll, { passive: false });
+    window.addEventListener('touchmove', preventScroll, { passive: false });
+    window.addEventListener('keydown', preventKeys, { passive: false });
+    window.addEventListener('scroll', handleScrollLock, { passive: true });
+
+    return () => {
+      window.removeEventListener('wheel', preventScroll);
+      window.removeEventListener('touchmove', preventScroll);
+      window.removeEventListener('keydown', preventKeys);
+      window.removeEventListener('scroll', handleScrollLock);
+    };
+  }, [isTransitionDone]);
+
   // Track scroll position to ensure sticky header displays beautifully on manual scroll
   useEffect(() => {
     // Reset to top immediately on mount
@@ -596,7 +636,7 @@ export default function App() {
         className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 pointer-events-auto ${
           isScrolled
             ? 'bg-[#FAF8F5]/85 backdrop-blur-md border-b border-[#E7D4B3]/50 shadow-sm shadow-[#2D2319]/5 py-0'
-            : 'bg-gradient-to-b from-[#0A1012]/75 via-[#0A1012]/35 to-transparent border-transparent shadow-none py-1.5'
+            : 'bg-gradient-to-b from-[#0A1012]/45 via-[#0A1012]/18 to-transparent border-transparent shadow-none py-1.5'
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
@@ -628,7 +668,7 @@ export default function App() {
                 className={`font-display font-bold tracking-wider text-base sm:text-lg leading-tight transition-colors duration-200 ${
                   isScrolled
                     ? 'text-[#2D2319] group-hover:text-[#8C6D3B]'
-                    : 'text-[#FAF8F5] drop-shadow-[0_2px_5px_rgba(0,0,0,0.85)] group-hover:text-[#E7D4B3]'
+                    : 'text-[#FAF8F5] drop-shadow-[0_1px_2px_rgba(0,0,0,0.22)] group-hover:text-[#E7D4B3]'
                 }`}
               >
                 THE KHAOSAN POSHTEL
@@ -637,7 +677,7 @@ export default function App() {
                 className={`font-sans text-[10px] tracking-widest uppercase font-semibold transition-colors duration-200 ${
                   isScrolled
                     ? 'text-[#7A6A5C]'
-                    : 'text-[#E7D4B3] drop-shadow-[0_1px_3px_rgba(0,0,0,0.85)]'
+                    : 'text-[#E7D4B3] drop-shadow-[0_1px_2px_rgba(0,0,0,0.40)]'
                 }`}
               >
                 {t.brandSubtitle}
@@ -662,7 +702,7 @@ export default function App() {
                 className={`font-medium text-sm tracking-wide transition-colors duration-200 relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#2A5542] hover:after:w-full after:transition-all after:duration-300 ${
                   isScrolled
                     ? 'text-[#2D2319] hover:text-[#2A5542]'
-                    : 'text-[#FAF8F5] drop-shadow-[0_1px_3px_rgba(0,0,0,0.7)] hover:text-[#E7D4B3]'
+                    : 'text-[#FAF8F5] drop-shadow-[0_1px_2px_rgba(0,0,0,0.22)] hover:text-[#E7D4B3]'
                 }`}
               >
                 {item.label}
@@ -673,13 +713,13 @@ export default function App() {
           {/* Header Action Area: Language Switcher (ENG | THAI) + Primary CTA */}
           <div className={`hidden md:flex items-center gap-4 header-nav-reveal ${!isTransitionDone ? 'opacity-0 -translate-y-1' : 'opacity-100 translate-y-0'}`}>
             {/* Language Switcher */}
-            <div className="flex items-center rounded-full bg-[#FAF8F5]/85 backdrop-blur-sm p-0.5 border border-[#E7D4B3]/60 shadow-xs">
+            <div className="flex items-center rounded-full bg-[#FAF8F5]/85 backdrop-blur-sm p-0.5 border border-[#2A5542]/30 shadow-xs">
               <button
                 type="button"
                 onClick={() => setLanguage('en')}
                 className={`px-3 py-1 rounded-full text-xs font-semibold tracking-wide transition-all duration-200 cursor-pointer ${
                   language === 'en'
-                    ? 'bg-[#2D2319] text-[#FAF8F5] shadow-xs'
+                    ? 'bg-[#2A5542] text-[#FAF8F5] shadow-xs'
                     : 'text-[#6A5A4D] hover:text-[#2A5542]'
                 }`}
                 aria-label="Switch language to English"
@@ -692,7 +732,7 @@ export default function App() {
                 onClick={() => setLanguage('th')}
                 className={`px-3 py-1 rounded-full text-xs font-semibold tracking-wide transition-all duration-200 cursor-pointer ${
                   language === 'th'
-                    ? 'bg-[#2D2319] text-[#FAF8F5] shadow-xs'
+                    ? 'bg-[#2A5542] text-[#FAF8F5] shadow-xs'
                     : 'text-[#6A5A4D] hover:text-[#2A5542]'
                 }`}
                 aria-label="Switch language to Thai"
@@ -705,7 +745,7 @@ export default function App() {
             {/* Header CTA Button */}
             <a
               href="#book"
-              className="inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-[#2D2319] text-[#FAF8F5] text-sm font-semibold tracking-wide shadow-sm hover:bg-[#2A5542] hover:shadow-md active:scale-98 transition-all duration-200"
+              className="inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-[#2A5542] text-[#FAF8F5] text-sm font-semibold tracking-wide shadow-sm hover:bg-[#1E3E30] hover:shadow-md active:scale-98 transition-all duration-200"
             >
               {t.bookStay}
             </a>
@@ -713,13 +753,13 @@ export default function App() {
 
           {/* Mobile Right Controls: Language Switcher (ENG | THAI) + Menu Toggle */}
           <div className={`md:hidden flex items-center gap-2.5 header-nav-reveal ${!isTransitionDone ? 'opacity-0 -translate-y-1' : 'opacity-100 translate-y-0'}`}>
-            <div className="flex items-center rounded-full bg-[#FAF8F5]/85 backdrop-blur-sm p-0.5 border border-[#E7D4B3]/60 shadow-xs">
+            <div className="flex items-center rounded-full bg-[#FAF8F5]/85 backdrop-blur-sm p-0.5 border border-[#2A5542]/30 shadow-xs">
               <button
                 type="button"
                 onClick={() => setLanguage('en')}
                 className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold transition-all ${
                   language === 'en'
-                    ? 'bg-[#2D2319] text-[#FAF8F5]'
+                    ? 'bg-[#2A5542] text-[#FAF8F5]'
                     : 'text-[#6A5A4D]'
                 }`}
               >
@@ -730,7 +770,7 @@ export default function App() {
                 onClick={() => setLanguage('th')}
                 className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold transition-all ${
                   language === 'th'
-                    ? 'bg-[#2D2319] text-[#FAF8F5]'
+                    ? 'bg-[#2A5542] text-[#FAF8F5]'
                     : 'text-[#6A5A4D]'
                 }`}
               >
@@ -783,7 +823,7 @@ export default function App() {
                 <a
                   href="#book"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full inline-flex items-center justify-center px-5 py-3 rounded-full bg-[#2D2319] text-[#FAF8F5] text-sm font-semibold tracking-wide shadow-md hover:bg-[#2A5542]"
+                  className="w-full inline-flex items-center justify-center px-5 py-3 rounded-full bg-[#2A5542] text-[#FAF8F5] text-sm font-semibold tracking-wide shadow-md hover:bg-[#1E3E30]"
                 >
                   {t.bookStay}
                 </a>
@@ -844,7 +884,7 @@ export default function App() {
         id="top"
         className="relative w-full h-screen min-h-[640px] flex items-center justify-center overflow-hidden bg-[#0E1614] pt-16 pb-8"
       >
-        {/* Full-bleed background video */}
+        {/* Full-bleed background video with enhanced natural brightness */}
         <video
           ref={videoRef}
           src={VIDEO_SRC}
@@ -858,7 +898,7 @@ export default function App() {
               videoRef.current.play().catch(console.warn);
             }
           }}
-          className="hero-video absolute inset-0 z-0 pointer-events-none select-none"
+          className="hero-video absolute inset-0 z-0 pointer-events-none select-none brightness-110 contrast-[1.01]"
         />
 
         {/* Localized blur and dark camouflage patch over the bottom-right Gemini watermark */}
@@ -886,16 +926,16 @@ export default function App() {
 
         {/* Static poster fallback for reduced motion preference */}
         <div
-          className="absolute inset-0 z-0 bg-cover bg-center pointer-events-none hidden motion-reduce:block"
+          className="absolute inset-0 z-0 bg-cover bg-center pointer-events-none hidden motion-reduce:block brightness-110"
           style={{ backgroundImage: `url(${POSTER_SRC})` }}
         />
 
-        {/* Clean, cinematic neutral dark scrim overlay with darker top for clear brand and header legibility */}
+        {/* Clean, cinematic neutral dark scrim overlay - lightened for vibrant, clear natural ambiance */}
         <div
           className="absolute inset-0 z-10 pointer-events-none"
           style={{
             background:
-              'linear-gradient(180deg, rgba(10, 16, 18, 0.72) 0%, rgba(10, 16, 18, 0.48) 14%, rgba(10, 16, 18, 0.18) 28%, rgba(10, 16, 18, 0.03) 42%, rgba(10, 16, 18, 0.30) 70%, rgba(10, 16, 18, 0.67) 100%)',
+              'linear-gradient(180deg, rgba(10, 16, 18, 0.38) 0%, rgba(10, 16, 18, 0.18) 14%, rgba(10, 16, 18, 0.05) 28%, rgba(10, 16, 18, 0.00) 45%, rgba(10, 16, 18, 0.16) 72%, rgba(10, 16, 18, 0.46) 100%)',
           }}
         />
 
@@ -908,11 +948,21 @@ export default function App() {
             </span>
           </div>
 
-          <h1 className="hero-fade-in opacity-0 font-display text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight text-[#F8F5EE] drop-shadow-md max-w-3xl leading-[1.15]">
+          <h1
+            className="hero-fade-in opacity-0 font-display text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white max-w-3xl leading-[1.15]"
+            style={{
+              textShadow: '0 0 1px rgba(42, 85, 66, 0.55), 1px 0 1px rgba(42, 85, 66, 0.30), -1px 0 1px rgba(42, 85, 66, 0.30), 0 1px 1px rgba(42, 85, 66, 0.30), 0 -1px 1px rgba(42, 85, 66, 0.30)',
+            }}
+          >
             {t.heroHeading}
           </h1>
 
-          <p className="hero-fade-in opacity-0 mt-4 sm:mt-5 text-base sm:text-lg text-[#F8F5EE]/90 max-w-2xl font-normal leading-relaxed drop-shadow-sm">
+          <p
+            className="hero-fade-in opacity-0 mt-4 sm:mt-5 text-base sm:text-lg text-white max-w-2xl font-medium leading-relaxed"
+            style={{
+              textShadow: '0 0 1px rgba(42, 85, 66, 0.40), 1px 0 1px rgba(42, 85, 66, 0.20), -1px 0 1px rgba(42, 85, 66, 0.20), 0 1px 6px rgba(0, 0, 0, 0.18)',
+            }}
+          >
             {t.heroSubheading}
           </p>
 

@@ -15,8 +15,8 @@ html {
   color: var(--poshtel-teal);
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   overflow-x: hidden;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(216, 199, 168, 0.55) transparent;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
 }
 
 body {
@@ -29,6 +29,8 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
 }
 
 #root {
@@ -37,22 +39,17 @@ body {
   overflow-x: hidden;
 }
 
-/* Elegant boutique custom scrollbar - transparent track so zero right-side spacing or gap appears */
+/* Completely remove and hide scrollbar for Chrome, Safari, Opera, and all WebKit browsers */
 ::-webkit-scrollbar {
-  width: 6px;
+  display: none !important;
+  width: 0px !important;
+  height: 0px !important;
+  background: transparent !important;
 }
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(216, 199, 168, 0.55);
-  border-radius: 9999px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #2A5542;
-}
-::-webkit-scrollbar-corner {
-  background: transparent;
+
+* {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
 }
 
 h1, h2, h3, h4, h5, h6 {
