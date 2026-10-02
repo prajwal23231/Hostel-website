@@ -8,7 +8,8 @@ if (typeof window !== 'undefined' && 'scrollRestoration' in history) {
 
 // Authentic project assets located under public/
 const VIDEO_SRC = '/videos/khaosan-tropical.mp4';
-const POSTER_SRC = '/images/gallery-palm-breeze.jpg';
+const POSTER_SRC = '/images/poster.jpg';
+const STATIC_HERO_BG = '/images/gallery-palm-breeze.jpg';
 const LOGO_SRC = '/images/khaosan-logo.png';
 const ARTWORK_CARD_SRC = '/images/khaosan-artwork-card.jpg';
 
@@ -355,7 +356,11 @@ export default function App() {
 
     if (!floatingEl || !targetEl) {
       setIsTransitionDone(true);
-      gsap.to('.hero-fade-in', { opacity: 1, y: 0, duration: 0.6 });
+      gsap.fromTo(
+        '.hero-fade-in',
+        { opacity: 0, y: 36, filter: 'blur(4px)' },
+        { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.85, stagger: 0.1, ease: 'power2.out' }
+      );
       return;
     }
 
@@ -407,13 +412,19 @@ export default function App() {
         },
         '-=0.35'
       )
-      .to(
+      .fromTo(
         '.hero-fade-in',
+        {
+          opacity: 0,
+          y: 36,
+          filter: 'blur(4px)',
+        },
         {
           opacity: 1,
           y: 0,
-          duration: 0.65,
-          stagger: 0.08,
+          filter: 'blur(0px)',
+          duration: 0.85,
+          stagger: 0.1,
           ease: 'power2.out',
         },
         '<+=0.04'
@@ -626,6 +637,47 @@ export default function App() {
       setTimeout(() => setAddressCopied(false), 3000);
     });
   };
+
+  // Scroll-triggered fading reveal motion for sections and elements below the hero
+  useEffect(() => {
+    const handleScrollReveal = () => {
+      const elements = document.querySelectorAll('.reveal-on-scroll, .reveal-scale-on-scroll');
+      if (!elements.length) return null;
+
+      if (typeof window === 'undefined' || !('IntersectionObserver' in window)) {
+        elements.forEach((el) => el.classList.add('is-revealed'));
+        return null;
+      }
+
+      const observer = new IntersectionObserver(
+        (entries, obs) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-revealed');
+              obs.unobserve(entry.target);
+            }
+          });
+        },
+        {
+          threshold: 0.1,
+          rootMargin: '0px 0px -40px 0px',
+        }
+      );
+
+      elements.forEach((el) => {
+        if (!el.classList.contains('is-revealed')) {
+          observer.observe(el);
+        }
+      });
+
+      return observer;
+    };
+
+    const obs = handleScrollReveal();
+    return () => {
+      if (obs) obs.disconnect();
+    };
+  }, [language, bookingSubmitted]);
 
   return (
     <div className="min-h-screen w-full bg-[#F8F5EE] text-[#16373F] font-sans antialiased selection:bg-[#E7D4B3] selection:text-[#16373F] overflow-x-hidden">
@@ -898,7 +950,7 @@ export default function App() {
               videoRef.current.play().catch(console.warn);
             }
           }}
-          className="hero-video absolute inset-0 z-0 pointer-events-none select-none brightness-110 contrast-[1.01]"
+          className="hero-video absolute inset-0 z-0 pointer-events-none select-none brightness-110 contrast-[1.01] bg-[#E7D4B3]"
         />
 
         {/* Localized blur and dark camouflage patch over the bottom-right Gemini watermark */}
@@ -927,7 +979,7 @@ export default function App() {
         {/* Static poster fallback for reduced motion preference */}
         <div
           className="absolute inset-0 z-0 bg-cover bg-center pointer-events-none hidden motion-reduce:block brightness-110"
-          style={{ backgroundImage: `url(${POSTER_SRC})` }}
+          style={{ backgroundImage: `url(${STATIC_HERO_BG})` }}
         />
 
         {/* Clean, cinematic neutral dark scrim overlay - lightened for vibrant, clear natural ambiance */}
@@ -941,7 +993,7 @@ export default function App() {
 
         {/* Hero Foreground Content - Optically centered on all display heights */}
         <div className="relative z-20 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col items-center">
-          <div className="hero-fade-in opacity-0 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FAF8F5]/85 backdrop-blur-sm border border-[#E7D4B3]/60 mb-5 shadow-sm">
+          <div className="hero-fade-in opacity-0 translate-y-8 will-change-transform inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FAF8F5]/85 backdrop-blur-sm border border-[#E7D4B3]/60 mb-5 shadow-sm">
             <span className="w-2 h-2 rounded-full bg-[#2A5542] animate-pulse" />
             <span className="text-xs font-semibold tracking-widest uppercase text-[#16373F]">
               {t.heroTag}
@@ -949,7 +1001,7 @@ export default function App() {
           </div>
 
           <h1
-            className="hero-fade-in opacity-0 font-display text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white max-w-3xl leading-[1.15]"
+            className="hero-fade-in opacity-0 translate-y-8 will-change-transform font-display text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white max-w-3xl leading-[1.15]"
             style={{
               textShadow: '0 0 1px rgba(42, 85, 66, 0.55), 1px 0 1px rgba(42, 85, 66, 0.30), -1px 0 1px rgba(42, 85, 66, 0.30), 0 1px 1px rgba(42, 85, 66, 0.30), 0 -1px 1px rgba(42, 85, 66, 0.30)',
             }}
@@ -958,7 +1010,7 @@ export default function App() {
           </h1>
 
           <p
-            className="hero-fade-in opacity-0 mt-4 sm:mt-5 text-base sm:text-lg text-white max-w-2xl font-medium leading-relaxed"
+            className="hero-fade-in opacity-0 translate-y-8 will-change-transform mt-4 sm:mt-5 text-base sm:text-lg text-white max-w-2xl font-medium leading-relaxed"
             style={{
               textShadow: '0 0 1px rgba(42, 85, 66, 0.40), 1px 0 1px rgba(42, 85, 66, 0.20), -1px 0 1px rgba(42, 85, 66, 0.20), 0 1px 6px rgba(0, 0, 0, 0.18)',
             }}
@@ -966,7 +1018,7 @@ export default function App() {
             {t.heroSubheading}
           </p>
 
-          <div className="hero-fade-in opacity-0 mt-8 flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+          <div className="hero-fade-in opacity-0 translate-y-8 will-change-transform mt-8 flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
             <a
               href="#book"
               className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-[#E7D4B3] text-[#16373F] font-semibold text-sm tracking-wide shadow-lg hover:bg-[#F2ECE1] hover:scale-102 active:scale-98 transition-all duration-200"
@@ -1016,7 +1068,7 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
             {/* Visual Column: Authentic Artwork Card */}
-            <div className="lg:col-span-5 order-2 lg:order-1">
+            <div className="lg:col-span-5 order-2 lg:order-1 reveal-scale-on-scroll">
               <div className="relative rounded-2xl overflow-hidden shadow-elevated bg-[#F2ECE1] border border-[#E7D4B3]/60 group">
                 <img
                   src={ARTWORK_CARD_SRC}
@@ -1035,7 +1087,7 @@ export default function App() {
             </div>
 
             {/* Text Narrative Column */}
-            <div className="lg:col-span-7 order-1 lg:order-2">
+            <div className="lg:col-span-7 order-1 lg:order-2 reveal-on-scroll">
               <span className="text-xs font-bold tracking-widest uppercase text-[#2A5542] block mb-3">
                 {t.aboutTag}
               </span>
@@ -1054,7 +1106,7 @@ export default function App() {
 
               {/* Three Core Brand Pillars */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-4 border-t border-[#E7D4B3]/50">
-                <div>
+                <div className="reveal-on-scroll reveal-delay-1">
                   <h3 className="font-display font-semibold text-base text-[#16373F] mb-1.5 flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-[#E7D4B3]" />
                     {t.pillar1Title}
@@ -1063,7 +1115,7 @@ export default function App() {
                     {t.pillar1Desc}
                   </p>
                 </div>
-                <div>
+                <div className="reveal-on-scroll reveal-delay-2">
                   <h3 className="font-display font-semibold text-base text-[#16373F] mb-1.5 flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-[#2A5542]" />
                     {t.pillar2Title}
@@ -1072,7 +1124,7 @@ export default function App() {
                     {t.pillar2Desc}
                   </p>
                 </div>
-                <div>
+                <div className="reveal-on-scroll reveal-delay-3">
                   <h3 className="font-display font-semibold text-base text-[#16373F] mb-1.5 flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-[#D96B50]" />
                     {t.pillar3Title}
@@ -1092,7 +1144,7 @@ export default function App() {
           ========================================================================= */}
       <section id="stay" className="py-24 sm:py-32 bg-[#F2ECE1] border-y border-[#E7D4B3]/40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl mx-auto text-center mb-16">
+          <div className="max-w-3xl mx-auto text-center mb-16 reveal-on-scroll">
             <span className="text-xs font-bold tracking-widest uppercase text-[#2A5542] block mb-3">
               {t.stayTag}
             </span>
@@ -1107,7 +1159,7 @@ export default function App() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
             {/* Private Room Card */}
-            <div className="bg-[#FFFFFF] rounded-2xl p-8 sm:p-10 shadow-soft border border-[#E7D4B3]/50 flex flex-col justify-between">
+            <div className="bg-[#FFFFFF] rounded-2xl p-8 sm:p-10 shadow-soft border border-[#E7D4B3]/50 flex flex-col justify-between reveal-on-scroll reveal-delay-1">
               <div>
                 <div className="inline-flex items-center px-3 py-1 rounded-full bg-[#E7D4B3]/40 text-[#16373F] text-xs font-semibold mb-6">
                   {t.privateTag}
@@ -1154,7 +1206,7 @@ export default function App() {
             </div>
 
             {/* Social Pod Dormitory Card */}
-            <div className="bg-[#FFFFFF] rounded-2xl p-8 sm:p-10 shadow-soft border border-[#E7D4B3]/50 flex flex-col justify-between">
+            <div className="bg-[#FFFFFF] rounded-2xl p-8 sm:p-10 shadow-soft border border-[#E7D4B3]/50 flex flex-col justify-between reveal-on-scroll reveal-delay-2">
               <div>
                 <div className="inline-flex items-center px-3 py-1 rounded-full bg-[#2A5542]/15 text-[#2A5542] text-xs font-semibold mb-6">
                   {t.dormTag}
@@ -1208,7 +1260,7 @@ export default function App() {
           ========================================================================= */}
       <section id="experience" className="py-24 sm:py-32 bg-[#F8F5EE]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl mx-auto text-center mb-16">
+          <div className="max-w-3xl mx-auto text-center mb-16 reveal-on-scroll">
             <span className="text-xs font-bold tracking-widest uppercase text-[#2A5542] block mb-3">
               {t.expTag}
             </span>
@@ -1223,7 +1275,7 @@ export default function App() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Amenity 1 */}
-            <div className="bg-[#FFFFFF] p-7 rounded-2xl border border-[#E7D4B3]/40 shadow-soft">
+            <div className="bg-[#FFFFFF] p-7 rounded-2xl border border-[#E7D4B3]/40 shadow-soft reveal-on-scroll reveal-delay-1">
               <div className="w-10 h-10 rounded-full bg-[#E7D4B3]/40 flex items-center justify-center mb-5 text-[#16373F]">
                 <svg className="w-5 h-5 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="2">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
@@ -1238,7 +1290,7 @@ export default function App() {
             </div>
 
             {/* Amenity 2 */}
-            <div className="bg-[#FFFFFF] p-7 rounded-2xl border border-[#E7D4B3]/40 shadow-soft">
+            <div className="bg-[#FFFFFF] p-7 rounded-2xl border border-[#E7D4B3]/40 shadow-soft reveal-on-scroll reveal-delay-2">
               <div className="w-10 h-10 rounded-full bg-[#2A5542]/15 flex items-center justify-center mb-5 text-[#2A5542]">
                 <svg className="w-5 h-5 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="2">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -1253,7 +1305,7 @@ export default function App() {
             </div>
 
             {/* Amenity 3 */}
-            <div className="bg-[#FFFFFF] p-7 rounded-2xl border border-[#E7D4B3]/40 shadow-soft">
+            <div className="bg-[#FFFFFF] p-7 rounded-2xl border border-[#E7D4B3]/40 shadow-soft reveal-on-scroll reveal-delay-3">
               <div className="w-10 h-10 rounded-full bg-[#E7D4B3]/40 flex items-center justify-center mb-5 text-[#16373F]">
                 <svg className="w-5 h-5 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="2">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
@@ -1268,7 +1320,7 @@ export default function App() {
             </div>
 
             {/* Amenity 4 */}
-            <div className="bg-[#FFFFFF] p-7 rounded-2xl border border-[#E7D4B3]/40 shadow-soft">
+            <div className="bg-[#FFFFFF] p-7 rounded-2xl border border-[#E7D4B3]/40 shadow-soft reveal-on-scroll reveal-delay-4">
               <div className="w-10 h-10 rounded-full bg-[#D96B50]/15 flex items-center justify-center mb-5 text-[#D96B50]">
                 <svg className="w-5 h-5 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="2">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
@@ -1290,7 +1342,7 @@ export default function App() {
           ========================================================================= */}
       <section id="location" className="py-24 sm:py-32 bg-[#F2ECE1] border-t border-[#E7D4B3]/40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl mb-12">
+          <div className="max-w-3xl mb-12 reveal-on-scroll">
             <span className="text-xs font-bold tracking-widest uppercase text-[#2A5542] block mb-3">
               {t.locationTag}
             </span>
@@ -1305,7 +1357,7 @@ export default function App() {
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch">
             {/* Interactive Google Map Embed - Detailed Street Level View (z=19) */}
-            <div className="lg:col-span-7 flex flex-col">
+            <div className="lg:col-span-7 flex flex-col reveal-scale-on-scroll">
               <div className="relative w-full h-[400px] sm:h-[480px] rounded-2xl overflow-hidden border border-[#E7D4B3]/60 shadow-elevated group bg-[#E4D0AD]">
                 <iframe
                   title="The Khaosan Poshtel Location Map - Soi Rambuttri"
@@ -1333,7 +1385,7 @@ export default function App() {
             </div>
 
             {/* Address & Credentials Info Column */}
-            <div className="lg:col-span-5 flex flex-col justify-between">
+            <div className="lg:col-span-5 flex flex-col justify-between reveal-on-scroll reveal-delay-2">
               <div className="bg-[#FFFFFF] rounded-2xl p-6 sm:p-8 shadow-elevated border border-[#E7D4B3]/60 h-full flex flex-col justify-between">
                 <div>
                   <span className="text-xs font-bold tracking-widest uppercase text-[#2A5542] block mb-2">
@@ -1433,7 +1485,7 @@ export default function App() {
           }}
         />
 
-        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center reveal-on-scroll">
           <span className="text-xs font-bold tracking-widest uppercase text-[#E7D4B3] block mb-3">
             {t.bookTag}
           </span>
@@ -1446,7 +1498,7 @@ export default function App() {
           </p>
 
           {/* Interactive Demo Reservation Box */}
-          <div className="bg-[#FFFFFF] text-[#16373F] rounded-2xl p-6 sm:p-10 shadow-2xl text-left border border-[#E7D4B3]/30">
+          <div className="bg-[#FFFFFF] text-[#16373F] rounded-2xl p-6 sm:p-10 shadow-2xl text-left border border-[#E7D4B3]/30 reveal-scale-on-scroll reveal-delay-1">
             <div className="flex items-center justify-between pb-6 mb-6 border-b border-[#E7D4B3]/40">
               <div>
                 <h3 className="font-display font-bold text-xl text-[#16373F]">
@@ -1565,7 +1617,7 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-10 pb-12 border-b border-[#F8F5EE]/10">
             {/* Brand column */}
-            <div className="md:col-span-6 space-y-4">
+            <div className="md:col-span-6 space-y-4 reveal-on-scroll">
               <div className="flex items-center gap-3">
                 <img
                   src={LOGO_SRC}
@@ -1590,7 +1642,7 @@ export default function App() {
             </div>
 
             {/* Quick in-page navigation anchors */}
-            <div className="md:col-span-3 space-y-3">
+            <div className="md:col-span-3 space-y-3 reveal-on-scroll reveal-delay-1">
               <h4 className="font-display font-semibold text-xs tracking-widest uppercase text-[#E7D4B3]">
                 {t.footerNavTitle}
               </h4>
@@ -1614,7 +1666,7 @@ export default function App() {
             </div>
 
             {/* Inquiries */}
-            <div className="md:col-span-3 space-y-3">
+            <div className="md:col-span-3 space-y-3 reveal-on-scroll reveal-delay-2">
               <h4 className="font-display font-semibold text-xs tracking-widest uppercase text-[#E7D4B3]">
                 {t.footerReservationsTitle}
               </h4>
@@ -1630,7 +1682,7 @@ export default function App() {
             </div>
           </div>
 
-          <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-[11px] text-[#F8F5EE]/50 gap-4">
+          <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-[11px] text-[#F8F5EE]/50 gap-4 reveal-on-scroll reveal-delay-1">
             <p>{t.footerCopyright}</p>
             <p>{t.footerFullAddress}</p>
           </div>
