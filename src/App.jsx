@@ -21,6 +21,8 @@ const LOOP_END = 7.8;
 export default function App() {
   const [isTransitionDone, setIsTransitionDone] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [loadProgress, setLoadProgress] = useState(0);
+  const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [bookingSubmitted, setBookingSubmitted] = useState(false);
   const [addressCopied, setAddressCopied] = useState(false);
@@ -30,12 +32,30 @@ export default function App() {
   const floatingLogoRef = useRef(null);
   const headerLogoTargetRef = useRef(null);
   const videoRef = useRef(null);
+  const watermarkMaskRef = useRef(null);
+  const loaderContainerRef = useRef(null);
   const animStartedRef = useRef(false);
 
   // Opening animation: Centered logo smoothly transitions into the header logo position
   const runOpeningAnimation = () => {
     if (animStartedRef.current) return;
     animStartedRef.current = true;
+
+    // 1. Immediately fade out interactive loader capsule
+    gsap.to('.opening-loader', {
+      opacity: 0,
+      y: 12,
+      duration: 0.35,
+      ease: 'power2.in',
+    });
+
+    // 2. Smoothly decrease opacity of watermark camouflage mask as tropical beach footage reveals
+    gsap.to('.watermark-camouflage', {
+      opacity: 0,
+      duration: 1.4,
+      delay: 0.35,
+      ease: 'power2.out',
+    });
 
     // Check for reduced motion preference
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -72,7 +92,7 @@ export default function App() {
       },
     });
 
-    // 1. Animate floating logo into the exact header logo slot
+    // Animate floating logo into the exact header logo slot
     tl.to(floatingEl, {
       x: deltaX,
       y: deltaY,
@@ -80,7 +100,7 @@ export default function App() {
       duration: 1.6,
       force3D: true,
     })
-      // 2. Reveal header navigation links & booking CTA as logo approaches destination
+      // Reveal header navigation links & booking CTA as logo approaches destination
       .to(
         '.header-fade-in',
         {
@@ -92,7 +112,7 @@ export default function App() {
         },
         '-=0.6'
       )
-      // 3. Reveal hero headline, copy, and booking buttons
+      // Reveal hero headline, copy, and booking buttons
       .to(
         '.hero-fade-in',
         {
@@ -119,12 +139,19 @@ export default function App() {
     } catch (err) {
       console.warn('Autoplay restricted by browser policy:', err);
       setAutoplayBlocked(true);
-      // Run animation so content remains accessible
       runOpeningAnimation();
     }
   };
 
-  // Video playback & visibility lifecycle
+  // Interactive entry click handler (allows user to immediately explore anytime)
+  const handleInteractiveEnter = () => {
+    if (animStartedRef.current) return;
+    setLoadProgress(100);
+    setIsVideoLoaded(true);
+    startPlayback();
+  };
+
+  // Video loading & buffering lifecycle with interactive progress coordination
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -138,26 +165,69 @@ export default function App() {
       }
     };
 
+    let progressTimer = null;
+    let autoStartTimer = null;
+    let currentPct = 0;
+
+    const getBufferPct = () => {
+      if (video.buffered.length > 0 && video.duration > 0) {
+        const end = video.buffered.end(video.buffered.length - 1);
+        return Math.round((end / video.duration) * 100);
+      }
+      return 0;
+    };
+
+    // Smooth progress timer coordinating with real buffering state
+    progressTimer = setInterval(() => {
+      if (animStartedRef.current) {
+        clearInterval(progressTimer);
+        return;
+      }
+
+      const bufferPct = getBufferPct();
+      let target = Math.max(bufferPct, 35);
+
+      if (video.readyState >= 3) {
+        target = 100;
+      } else if (video.readyState >= 2) {
+        target = Math.max(target, 80);
+      }
+
+      if (currentPct < target) {
+        currentPct += Math.max(1, Math.round((target - currentPct) * 0.22));
+      }
+
+      if (currentPct >= 100 && (video.readyState >= 3 || bufferPct >= 80)) {
+        currentPct = 100;
+        setLoadProgress(100);
+        setIsVideoLoaded(true);
+        clearInterval(progressTimer);
+
+        // Auto-start once loaded after a brief satisfying pause
+        autoStartTimer = setTimeout(() => {
+          if (!animStartedRef.current) {
+            startPlayback();
+          }
+        }, 500);
+      } else {
+        setLoadProgress(Math.min(96, currentPct));
+      }
+    }, 45);
+
     const handleCanPlay = () => {
-      startPlayback();
+      if (video.readyState >= 3) {
+        setIsVideoLoaded(true);
+      }
     };
 
     video.addEventListener('timeupdate', handleTimeUpdate);
     video.addEventListener('canplay', handleCanPlay);
 
     if (video.readyState >= 3) {
-      startPlayback();
+      setIsVideoLoaded(true);
     }
 
-    // Safety fallback timer to ensure animation triggers even on slow decoders or headless environments
-    const fallbackTimer = setTimeout(() => {
-      if (!animStartedRef.current) {
-        startPlayback();
-      }
-    }, 600);
-
-    // Visibility change handling:
-    // "Pause the video when the browser tab is hidden, and resume appropriately when it becomes visible."
+    // Visibility change handling
     const handleVisibilityChange = () => {
       if (document.hidden) {
         video.pause();
@@ -172,13 +242,16 @@ export default function App() {
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
-      clearTimeout(fallbackTimer);
+      clearInterval(progressTimer);
+      clearTimeout(autoStartTimer);
       video.removeEventListener('timeupdate', handleTimeUpdate);
       video.removeEventListener('canplay', handleCanPlay);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       if (floatingLogoRef.current) {
         gsap.killTweensOf(floatingLogoRef.current);
       }
+      gsap.killTweensOf('.opening-loader');
+      gsap.killTweensOf('.watermark-camouflage');
       gsap.killTweensOf('.header-fade-in');
       gsap.killTweensOf('.hero-fade-in');
     };
@@ -329,23 +402,77 @@ export default function App() {
       </header>
 
       {/* =========================================================================
-          OPENING FLOATING LOGO (Smoothly animates from center into header slot)
+          OPENING FLOATING LOGO & INTERACTIVE LUXURY LOADER
           ========================================================================= */}
       {!isTransitionDone && !isScrolled && (
-        <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center">
+        <div
+          onClick={handleInteractiveEnter}
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center p-4 cursor-pointer"
+        >
+          {/* Centered Logo Emblem */}
           <div
             ref={floatingLogoRef}
-            className="w-[280px] sm:w-[360px] md:w-[420px] max-w-[82vw] h-auto will-change-transform"
+            className="w-[280px] sm:w-[360px] md:w-[420px] max-w-[82vw] h-auto will-change-transform group transition-transform duration-300 hover:scale-102"
             style={{
               filter: 'drop-shadow(0 14px 30px rgba(22, 55, 63, 0.28)) drop-shadow(0 2px 6px rgba(0, 0, 0, 0.15))',
             }}
+            title="Click anywhere to enter The Khaosan Poshtel"
           >
             <img
               src={LOGO_SRC}
               alt="The Khaosan Poshtel Opening Emblem"
-              className="w-full h-auto object-contain select-none"
+              className="w-full h-auto object-contain select-none pointer-events-none"
               draggable={false}
             />
+          </div>
+
+          {/* Interactive Luxury Loading Capsule */}
+          <div
+            ref={loaderContainerRef}
+            className="opening-loader mt-8 flex flex-col items-center select-none"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleInteractiveEnter();
+            }}
+          >
+            <button
+              type="button"
+              className="group relative flex items-center gap-3 px-6 py-2.5 rounded-full bg-[#16373F]/90 backdrop-blur-md border border-[#E7D4B3]/40 shadow-xl hover:bg-[#16373F] hover:border-[#E7D4B3] hover:scale-103 active:scale-98 transition-all duration-300 cursor-pointer"
+            >
+              {/* Spinner or ready indicator */}
+              <div className="relative w-5 h-5 flex items-center justify-center">
+                {loadProgress < 100 ? (
+                  <svg className="w-5 h-5 animate-spin text-[#E7D4B3]" viewBox="0 0 24 24" fill="none">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    />
+                  </svg>
+                ) : (
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#E7D4B3] group-hover:scale-125 transition-transform" />
+                )}
+              </div>
+
+              {/* Status Text & Progress */}
+              <div className="flex flex-col text-left">
+                <span className="font-sans text-xs tracking-wider font-semibold text-[#E7D4B3] uppercase">
+                  {loadProgress < 100 ? `Loading Sanctuary · ${loadProgress}%` : 'Enter The Poshtel →'}
+                </span>
+                <span className="text-[10px] text-[#E7D4B3]/75 font-normal">
+                  {loadProgress < 100 ? 'Preparing your tropical retreat' : 'Click anywhere to begin'}
+                </span>
+              </div>
+            </button>
+
+            {/* Fine Golden Progress Line */}
+            <div className="w-48 sm:w-56 h-1 mt-3 bg-[#16373F]/30 backdrop-blur-sm rounded-full overflow-hidden border border-[#E7D4B3]/20">
+              <div
+                className="h-full bg-gradient-to-r from-[#E7D4B3] via-[#FAF8F5] to-[#E7D4B3] transition-all duration-300 rounded-full"
+                style={{ width: `${loadProgress}%` }}
+              />
+            </div>
           </div>
         </div>
       )}
@@ -366,6 +493,22 @@ export default function App() {
           playsInline
           preload="auto"
           className="hero-video absolute inset-0 z-0 pointer-events-none select-none"
+        />
+
+        {/* Camouflage block over Gemini watermark during full-screen opening */}
+        <div
+          ref={watermarkMaskRef}
+          className="watermark-camouflage absolute pointer-events-none z-10"
+          style={{
+            right: '5%',
+            bottom: '10%',
+            width: '240px',
+            height: '170px',
+            background: 'radial-gradient(ellipse at center, #E4D0AD 0%, #E4D0AD 55%, rgba(228, 208, 173, 0) 100%)',
+            opacity: isTransitionDone ? 0 : 1,
+            transition: 'opacity 1.2s ease-out',
+          }}
+          aria-hidden="true"
         />
 
         {/* Static poster fallback for reduced motion preference */}
