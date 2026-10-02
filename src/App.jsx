@@ -8,72 +8,354 @@ if (typeof window !== 'undefined' && 'scrollRestoration' in history) {
 
 // Authentic project assets located under public/
 const VIDEO_SRC = '/videos/khaosan-tropical.mp4';
-const POSTER_SRC = '/images/poster.jpg';
+const POSTER_SRC = '/images/gallery-palm-breeze.jpg';
 const LOGO_SRC = '/images/khaosan-logo.png';
 const ARTWORK_CARD_SRC = '/images/khaosan-artwork-card.jpg';
 
-// Video timing constants from frame-level analysis:
-// 0.0s - 0.35s: Warm-beige opening frame (played once on initial entrance).
-// 0.35s - 1.85s: Video reveal of tropical beach scene & leaf entrance (intro only).
-// 1.9s - 7.65s: Established tropical beach scene with green leaves swaying naturally (continuous seamless loop).
-const LOOP_START = 1.9;
-const LOOP_END = 7.65;
+// Video timing constants:
+// 0.0s - 2.8s: Opening reveal of tropical beach scene (played once on initial entry).
+// 3.0s - 6.9s: Constant rhythmic swaying leaves loop (loops 1.1s before video ends so leaves never stop moving).
+const LOOP_START = 3.0;
+const LOOP_END = 6.9;
+
+// Comprehensive Bilingual Content Dictionary (English and Thai)
+const TRANSLATIONS = {
+  en: {
+    // Header & Brand
+    brandSubtitle: 'Bangkok · Boutique Hostel',
+    about: 'About',
+    stay: 'Stay',
+    experience: 'Experience',
+    location: 'Location',
+    bookStay: 'Book Your Stay',
+
+    // Opening Loader
+    loaderLoading: 'Loading Sanctuary · ',
+    loaderReady: 'Enter The Poshtel →',
+    loaderSubtitlePrep: 'Preparing your tropical retreat',
+    loaderSubtitleClick: 'Click anywhere to begin',
+
+    // Hero Section
+    heroTag: 'Soi Rambuttri · Bangkok',
+    heroHeading: 'A Tropical Sanctuary in Old Town Bangkok',
+    heroSubheading:
+      'Where island serenity meets Bangkok’s historic pulse. Experience thoughtful boutique comfort, lush palm-framed relaxation, and vibrant community steps from Khaosan Road.',
+    explorePoshtel: 'Explore The Poshtel',
+
+    // About Section
+    aboutTag: 'Boutique Hospitality & Island Ease',
+    aboutHeading: 'Where Bangkok’s Historic Soul Meets Tropical Serenity',
+    aboutCardTitle: 'The Khaosan Poshtel Brand Artwork',
+    aboutCardDesc: 'Celebrating tropical travel, freedom, and communal warmth in Phra Nakhon.',
+    aboutP1:
+      'Nestled along the tree-lined pedestrian pathway of Soi Rambuttri, just moments from the world-famous Khaosan Road, The Khaosan Poshtel redefines boutique hostel living. We offer travelers an oasis of calm—warm sand tones, natural greenery, and thoughtful design that lets you recharge between Bangkok adventures.',
+    aboutP2:
+      'Operated by RK Hospitality Company Limited, our poshtel is built around hospitality, comfort, and community. Whether returning from ancient riverside temples or exploring lively night markets, you will find a relaxed haven to share stories, unwind, and feel right at home.',
+    pillar1Title: 'Tropical Calm',
+    pillar1Desc: 'Warm woods, sand palettes, and airy spaces designed for peaceful restoration.',
+    pillar2Title: 'Social Spirit',
+    pillar2Desc: 'Inviting communal spaces that inspire connection and shared exploration.',
+    pillar3Title: 'Old Town Heart',
+    pillar3Desc: 'Prime Rambuttri address steps from cultural landmarks, street food, and river ferries.',
+
+    // Stay Section
+    stayTag: 'Accommodation',
+    stayHeading: 'Thoughtfully Designed Rest',
+    staySubheading:
+      'Every space at The Khaosan Poshtel is crafted to balance restful privacy with a welcoming social atmosphere. Natural textures, crisp linens, and modern boutique amenities ensure restorative sleep in the center of Bangkok.',
+    privateTag: 'Private Sanctuary',
+    privateTitle: 'Boutique Private Rooms',
+    privateDesc:
+      'Serene private rooms curated for couples, solo travelers, and digital wanderers seeking calm solitude after days exploring Bangkok. Finished with warm sand tones, clean lines, and peaceful natural light.',
+    privateFeat1: 'Individual climate control & air-conditioning',
+    privateFeat2: 'Ensuite private bathroom with hot rain shower',
+    privateFeat3: 'Crisp hotel-grade linens and plush pillows',
+    privateFeat4: 'High-speed Wi-Fi and dedicated charging points',
+    privateBtn: 'Inquire for Private Rooms',
+
+    dormTag: 'Social & Connected',
+    dormTitle: 'Curated Pod Dormitories',
+    dormDesc:
+      'Thoughtfully designed shared dorms engineered for comfort, security, and quiet rest. Each pod provides personal space with dedicated privacy curtains and lockable storage.',
+    dormFeat1: 'Custom pod beds with blackout privacy curtains',
+    dormFeat2: 'Personal reading light and universal power outlets',
+    dormFeat3: 'Secure under-bed luggage lockers',
+    dormFeat4: 'Spotless shared bathrooms maintained continuously',
+    dormBtn: 'Inquire for Dorm Beds',
+
+    // Experience Section
+    expTag: 'Life at the Poshtel',
+    expHeading: 'Warm Hospitality & Everyday Ease',
+    expSubheading:
+      'Designed around effortless travel: relaxed communal spaces, friendly assistance, and the essentials you need to explore Bangkok comfortably.',
+    amen1Title: 'Tropical Courtyard',
+    amen1Desc: 'Breezy open spaces surrounded by natural greenery to read, enjoy morning coffee, or work remotely with reliable Wi-Fi.',
+    amen2Title: 'Social Community',
+    amen2Desc: 'A naturally welcoming vibe where solo travelers and friends meet, share itineraries, and explore the city together.',
+    amen3Title: 'Secure Storage',
+    amen3Desc: 'Safe baggage storage prior to check-in or post checkout so you can discover Bangkok unencumbered by bags.',
+    amen4Title: 'Local Travel Tips',
+    amen4Desc: 'Authentic neighborhood recommendations for canal boats, street food stalls, quiet riverside temples, and night strolls.',
+
+    // Location Section
+    locationTag: 'Location & Map',
+    locationHeading: 'Find Us on Soi Rambuttri, Bangkok',
+    locationSubheading:
+      'Located at 92 Soi Rambutri in historic Phra Nakhon, Bangkok. Explore the interactive street-level map below for our exact pinpoint and transit routes.',
+    openGoogleMaps: 'Open in Google Maps',
+    propEntityTag: 'Property Address & Entity',
+    propName: 'The Khaosan Poshtel',
+    addressLabel: 'Address',
+    addressText: '92 Soi Rambutri, Talat Yot, Phra Nakhon, Bangkok 10200',
+    addressSub: '(Talat Yot Subdistrict, Phra Nakhon District)',
+    entityLabel: 'Operating Entity',
+    entityName: 'RK Hospitality Company Limited',
+    entitySub: '(RK Hospitality Co., Ltd.)',
+    arrivalLabel: 'Arrival Note',
+    arrivalText: 'Show the address in Thai to taxi drivers: 92 ซอยรามบุตรี แขวงตลาดยอด เขตพระนคร กรุงเทพมหานคร 10200',
+    copyAddress: 'Copy Address for Taxi',
+    addressCopied: 'Address Copied!',
+    getDirections: 'Get Directions →',
+
+    // Booking Section
+    bookTag: 'Plan Your Bangkok Adventure',
+    bookHeading: 'Book Your Stay at The Khaosan Poshtel',
+    bookSubheading:
+      'Experience our tropical boutique haven on Soi Rambuttri. Select your preferred dates below to check availability for private rooms and social pods.',
+    bookFormTitle: 'Reservation Inquiry',
+    bookDemoBadge: 'Demo Booking System',
+    bookCheckIn: 'Check-In Date',
+    bookCheckOut: 'Check-Out Date',
+    bookRoomType: 'Accommodation Type',
+    bookPrivateOption: 'Boutique Private Room',
+    bookDormOption: 'Curated Social Pod Dorm',
+    bookGuests: 'Guests',
+    bookGuest1: '1 Guest',
+    bookGuest2: '2 Guests',
+    bookGuest3: '3+ Group Inquiry',
+    bookNote: '* Note: This is an interactive demo of the booking flow.',
+    bookSubmitBtn: 'Check Availability (Demo)',
+    bookSuccessTitle: 'Inquiry Received',
+    bookSuccessDesc:
+      'Thank you for your interest! In the production release, this action connects directly to The Khaosan Poshtel live reservation engine.',
+    bookAnotherBtn: 'Make Another Inquiry',
+
+    // Footer Section
+    footerDesc: 'A refined tropical boutique poshtel nestled along Soi Rambuttri in historic Phra Nakhon, Bangkok.',
+    footerEntityLabel: 'Operating Entity:',
+    footerAddressLabel: 'Address:',
+    footerNavTitle: 'Navigation',
+    footerReservationsTitle: 'Reservations',
+    footerResNotice: 'Online bookings for The Khaosan Poshtel will launch through RK Hospitality Co., Ltd.',
+    footerResLink: 'Inquire About Availability →',
+    footerCopyright: '© 2026 The Khaosan Poshtel. All rights reserved.',
+    footerFullAddress: '92 Soi Rambutri, Talat Yot Subdistrict, Phra Nakhon District, Bangkok 10200',
+  },
+  th: {
+    // Header & Brand
+    brandSubtitle: 'กรุงเทพฯ · บูทีคโฮสเทล',
+    about: 'เกี่ยวกับเรา',
+    stay: 'ห้องพัก',
+    experience: 'ประสบการณ์',
+    location: 'ที่ตั้งและแผนที่',
+    bookStay: 'จองห้องพัก',
+
+    // Opening Loader
+    loaderLoading: 'กำลังเตรียมพื้นที่พักผ่อน · ',
+    loaderReady: 'เข้าสู่ เดอะ ข้าวสาร พอชเทล →',
+    loaderSubtitlePrep: 'จัดเตรียมโอเอซิสสไตล์ทรอปิคอลของคุณ',
+    loaderSubtitleClick: 'คลิกที่ใดก็ได้เพื่อเริ่มต้น',
+
+    // Hero Section
+    heroTag: 'ซอยรามบุตรี · กรุงเทพมหานคร',
+    heroHeading: 'สถานที่พักผ่อนสไตล์ทรอปิคอล ใจกลางพระนคร',
+    heroSubheading:
+      'สัมผัสความสงบผ่อนคลายท่ามกลางธรรมชาติอันร่มรื่น ผสานเสน่ห์แห่งย่านประวัติศาสตร์กรุงเทพฯ เพียงไม่กี่ก้าวจากถนนข้าวสาร',
+    explorePoshtel: 'สำรวจที่พัก',
+
+    // About Section
+    aboutTag: 'การต้อนรับระดับบูทีค & ความผ่อนคลายสไตล์เกาะ',
+    aboutHeading: 'จุดบรรจบของจิตวิญญาณประวัติศาสตร์กรุงเทพฯ และความสงบสไตล์ทรอปิคอล',
+    aboutCardTitle: 'งานศิลปะแบรนด์ เดอะ ข้าวสาร พอชเทล',
+    aboutCardDesc: 'เฉลิมฉลองการเดินทางสไตล์ทรอปิคอล อิสรภาพ และมิตรภาพอันอบอุ่นในย่านพระนคร',
+    aboutP1:
+      'ณ ซอยรามบุตรี ถนนคนเดินอันร่มรื่นด้วยเงาไม้ ห่างจากถนนข้าวสารอันโด่งดังระดับโลกเพียงไม่กี่ก้าว เดอะ ข้าวสาร พอชเทล (The Khaosan Poshtel) ได้สร้างนิยามใหม่ให้กับการพักผ่อนแบบบูทีคโฮสเทล เรามอบโอเอซิสแห่งความสงบด้วยโทนสีทรายอบอุ่น แมกไม้เขียวขจี และการออกแบบที่พิถีพิถัน เพื่อให้คุณได้ชาร์จพลังระหว่างการผจญภัยในกรุงเทพฯ',
+    aboutP2:
+      'ดำเนินการโดย บริษัท อาร์เค ฮอสพิทอลลิตี้ จำกัด (RK Hospitality Company Limited) พอชเทลของเราสร้างขึ้นบนพื้นฐานของการต้อนรับ ความสะดวกสบาย และชุมชนนักเดินทาง ไม่ว่าจะกลับจากการเยี่ยมชมวัดวาอารามริมแม่น้ำเจ้าพระยา หรือสำรวจตลาดกลางคืนอันคึกคัก คุณจะได้พบกับพื้นที่ผ่อนคลายสำหรับแบ่งปันเรื่องราว พักผ่อน และรู้สึกอบอุ่นเหมือนอยู่บ้าน',
+    pillar1Title: 'ความสงบสไตล์ทรอปิคอล',
+    pillar1Desc: 'งานไม้โทนอุ่น พาเลตต์สีทรายธรรมชาติ และพื้นที่โปร่งสบายเพื่อการพักผ่อนอย่างแท้จริง',
+    pillar2Title: 'จิตวิญญาณแห่งมิตรภาพ',
+    pillar2Desc: 'พื้นที่ส่วนกลางที่อบอุ่นและเชื้อเชิญ เชื่อมโยงและแบ่งปันการเดินทางร่วมกัน',
+    pillar3Title: 'ใจกลางย่านเมืองเก่า',
+    pillar3Desc: 'ทำเลทองบนซอยรามบุตรี ใกล้สถานที่สำคัญทางประวัติศาสตร์ สตรีทฟู้ด และท่าเรือข้ามฟาก',
+
+    // Stay Section
+    stayTag: 'ห้องพักและที่พัก',
+    stayHeading: 'การพักผ่อนที่ออกแบบอย่างพิถีพิถัน',
+    staySubheading:
+      'ทุกพื้นที่ของ เดอะ ข้าวสาร พอชเทล ได้รับการสร้างสรรค์ขึ้นเพื่อสร้างสมดุลระหว่างความเป็นส่วนตัวอันเงียบสงบและบรรยากาศชุมชนที่อบอุ่น เส้นใยธรรมชาติ เครื่องนอนคุณภาพ และสิ่งอำนวยความสะดวกสไตล์บูทีคทันสมัย ช่วยให้คุณหลับสบายใจกลางกรุงเทพฯ',
+    privateTag: 'พื้นที่ส่วนตัวอันเงียบสงบ',
+    privateTitle: 'ห้องพักส่วนตัวสไตล์บูทีค',
+    privateDesc:
+      'ห้องพักส่วนตัวที่เงียบสงบ ออกแบบสำหรับคู่รัก นักเดินทางเดี่ยว และคนทำงานดิจิทัลที่มองหาความสงบหลังสำรวจกรุงเทพฯ ตกแต่งด้วยโทนสีทรายอบอุ่น เส้นสายเรียบหรู และแสงธรรมชาติที่สบายตา',
+    privateFeat1: 'ระบบปรับอากาศและควบคุมอุณหภูมิแยกเฉพาะห้อง',
+    privateFeat2: 'ห้องน้ำส่วนตัวในตัวพร้อมฝักบัวเรนชาวเวอร์น้ำอุ่น',
+    privateFeat3: 'เครื่องนอนระดับโรงแรมและหมอนนุ่มพิเศษ',
+    privateFeat4: 'Wi-Fi ความเร็วสูงและจุดชาร์จอุปกรณ์เฉพาะ',
+    privateBtn: 'สอบถามห้องพักส่วนตัว',
+
+    dormTag: 'มิตรภาพและการพบปะ',
+    dormTitle: 'ห้องพักรวมสไตล์พ็อด (Pod Dormitories)',
+    dormDesc:
+      'ห้องพักรวมที่ออกแบบอย่างพิถีพิถันเพื่อความสะดวกสบาย ความปลอดภัย และการพักผ่อนที่เงียบสงบ แต่ละพ็อดมีม่านทึบแสงเพื่อความเป็นส่วนตัวและที่เก็บสัมภาระพร้อมกุญแจล็อค',
+    dormFeat1: 'เตียงพ็อดดีไซน์พิเศษพร้อมม่านกั้นเพิ่มความเป็นส่วนตัว',
+    dormFeat2: 'ไฟอ่านหนังสือส่วนตัวและเต้ารับไฟฟ้าสากล',
+    dormFeat3: 'ตู้ล็อคเกอร์เก็บสัมภาระใต้เตียงที่ปลอดภัย',
+    dormFeat4: 'ห้องน้ำรวมที่สะอาดสะอ้าน ดูแลสุขอนามัยอย่างต่อเนื่อง',
+    dormBtn: 'สอบถามเตียงพักรวม',
+
+    // Experience Section
+    expTag: 'ชีวิตในพอชเทล',
+    expHeading: 'การต้อนรับอันอบอุ่น & ความสะดวกสบายในทุกวัน',
+    expSubheading:
+      'ออกแบบมาเพื่อการเดินทางที่ราบรื่น: พื้นที่ส่วนกลางที่ผ่อนคลาย ความช่วยเหลืออย่างเป็นมิตร และสิ่งอำนวยความสะดวกที่คุณต้องการในการสำรวจกรุงเทพฯ อย่างสบายใจ',
+    amen1Title: 'ลานพักผ่อนสไตล์ทรอปิคอล',
+    amen1Desc: 'พื้นที่เปิดโล่งรับลมธรรมชาติ ท่ามกลางแมกไม้ร่มรื่น สำหรับอ่านหนังสือ จิบกาแฟยามเช้า หรือนั่งทำงานพร้อม Wi-Fi เสถียร',
+    amen2Title: 'ชุมชนนักเดินทาง',
+    amen2Desc: 'บรรยากาศที่เป็นกันเองที่นักเดินทางเดี่ยวและกลุ่มเพื่อนได้พบปะ แลกเปลี่ยนแผนการเดินทาง และสำรวจเมืองไปด้วยกัน',
+    amen3Title: 'ที่เก็บสัมภาระปลอดภัย',
+    amen3Desc: 'บริการรับฝากกระเป๋าอย่างปลอดภัยก่อนเช็คอินหรือหลังเช็คเอาท์ เพื่อให้คุณเดินเที่ยวกรุงเทพฯ ได้อย่างคล่องตัว',
+    amen4Title: 'คำแนะนำการเดินทางท้องถิ่น',
+    amen4Desc: 'คำแนะนำจากคนในพื้นที่สำหรับเรือคลองแสนแสบ ร้านสตรีทฟู้ดเด็ด วัดริมน้ำอันเงียบสงบ และจุดเดินเล่นยามค่ำคืน',
+
+    // Location Section
+    locationTag: 'ที่ตั้งและแผนที่',
+    locationHeading: 'การเดินทางมายัง ซอยรามบุตรี กรุงเทพฯ',
+    locationSubheading:
+      'ตั้งอยู่ ณ เลขที่ 92 ซอยรามบุตรี แขวงตลาดยอด เขตพระนคร กรุงเทพฯ ดูแผนที่ซอยรามบุตรีและถนนข้าวสารอย่างละเอียดด้านล่าง',
+    openGoogleMaps: 'เปิดใน Google Maps',
+    propEntityTag: 'ที่อยู่และนิติบุคคลของที่พัก',
+    propName: 'เดอะ ข้าวสาร พอชเทล',
+    addressLabel: 'ที่อยู่',
+    addressText: '92 ซอยรามบุตรี แขวงตลาดยอด เขตพระนคร กรุงเทพมหานคร 10200',
+    addressSub: '(แขวงตลาดยอด เขตพระนคร)',
+    entityLabel: 'นิติบุคคลผู้ดำเนินงาน',
+    entityName: 'บริษัท อาร์เค ฮอสพิทอลลิตี้ จำกัด',
+    entitySub: '(RK Hospitality Company Limited)',
+    arrivalLabel: 'คำแนะนำสำหรับการเดินทาง',
+    arrivalText: 'แสดงที่อยู่นี้แก่คนขับแท็กซี่: 92 ซอยรามบุตรี แขวงตลาดยอด เขตพระนคร กรุงเทพมหานคร 10200',
+    copyAddress: 'คัดลอกที่อยู่สำหรับแท็กซี่',
+    addressCopied: 'คัดลอกที่อยู่แล้ว!',
+    getDirections: 'ขอเส้นทางเดินทาง →',
+
+    // Booking Section
+    bookTag: 'วางแผนการเดินทางในกรุงเทพฯ ของคุณ',
+    bookHeading: 'จองการเข้าพักที่ เดอะ ข้าวสาร พอชเทล',
+    bookSubheading:
+      'สัมผัสสถานที่พักผ่อนสไตล์ทรอปิคอลบูทีคบนซอยรามบุตรี เลือกวันที่คุณต้องการเพื่อตรวจสอบห้องว่างสำหรับห้องพักส่วนตัวและเตียงพ็อด',
+    bookFormTitle: 'สอบถามการสำรองห้องพัก',
+    bookDemoBadge: 'ระบบจองจำลอง (Demo)',
+    bookCheckIn: 'วันที่เช็คอิน',
+    bookCheckOut: 'วันที่เช็คเอาท์',
+    bookRoomType: 'ประเภทห้องพัก',
+    bookPrivateOption: 'ห้องพักส่วนตัวสไตล์บูทีค',
+    bookDormOption: 'ห้องพักรวมสไตล์พ็อด',
+    bookGuests: 'จำนวนผู้เข้าพัก',
+    bookGuest1: '1 ท่าน',
+    bookGuest2: '2 ท่าน',
+    bookGuest3: '3 ท่านขึ้นไป (สอบถามกลุ่ม)',
+    bookNote: '* หมายเหตุ: นี่คือการจำลองขั้นตอนการจองห้องพัก',
+    bookSubmitBtn: 'ตรวจสอบห้องว่าง (Demo)',
+    bookSuccessTitle: 'ได้รับข้อมูลการสอบถามแล้ว',
+    bookSuccessDesc:
+      'ขอขอบคุณสำหรับความสนใจของคุณ! ในระบบจริง ขั้นตอนนี้จะเชื่อมต่อไปยังระบบจองห้องพักของ เดอะ ข้าวสาร พอชเทล โดยตรง',
+    bookAnotherBtn: 'ส่งคำสอบถามใหม่อีกครั้ง',
+
+    // Footer Section
+    footerDesc: 'พอชเทลสไตล์ทรอปิคอลบูทีคอันประณีต ตั้งอยู่บนซอยรามบุตรี ในย่านประวัติศาสตร์พระนคร กรุงเทพมหานคร',
+    footerEntityLabel: 'นิติบุคคลผู้ดำเนินงาน:',
+    footerAddressLabel: 'ที่อยู่:',
+    footerNavTitle: 'เมนูหลัก',
+    footerReservationsTitle: 'การสำรองห้องพัก',
+    footerResNotice: 'การจองออนไลน์สำหรับ เดอะ ข้าวสาร พอชเทล จะเปิดให้บริการผ่าน บริษัท อาร์เค ฮอสพิทอลลิตี้ จำกัด',
+    footerResLink: 'สอบถามเกี่ยวกับห้องว่าง →',
+    footerCopyright: '© 2026 เดอะ ข้าวสาร พอชเทล สงวนลิขสิทธิ์',
+    footerFullAddress: 'เลขที่ 92 ซอยรามบุตรี แขวงตลาดยอด เขตพระนคร กรุงเทพมหานคร 10200',
+  },
+};
 
 export default function App() {
+  const [language, setLanguage] = useState('en');
+  const t = TRANSLATIONS[language];
+  const [isLoading, setIsLoading] = useState(true);
+  const [showOpeningLogo, setShowOpeningLogo] = useState(false);
   const [isTransitionDone, setIsTransitionDone] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [loadProgress, setLoadProgress] = useState(0);
-  const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [bookingSubmitted, setBookingSubmitted] = useState(false);
   const [addressCopied, setAddressCopied] = useState(false);
   const [autoplayBlocked, setAutoplayBlocked] = useState(false);
 
   // References for animation coordination
+  const loaderRef = useRef(null);
   const floatingLogoRef = useRef(null);
   const headerLogoTargetRef = useRef(null);
   const videoRef = useRef(null);
-  const watermarkMaskRef = useRef(null);
-  const loaderContainerRef = useRef(null);
   const animStartedRef = useRef(false);
   const introPassedRef = useRef(false);
+  const hasRunOpeningRef = useRef(false);
 
-  // Opening animation: Centered logo smoothly transitions into the header logo position with a slower, cinematic pace
-  const runOpeningAnimation = () => {
+  // Transition from loading state into logo reveal and coordinated page reveal
+  const startOpeningSequence = () => {
     if (animStartedRef.current) return;
     animStartedRef.current = true;
 
-    // 1. Immediately fade out interactive loader capsule
-    gsap.to('.opening-loader', {
-      opacity: 0,
-      y: 12,
-      duration: 0.35,
-      ease: 'power2.in',
-    });
-
-    // 2. Smoothly decrease opacity of watermark camouflage mask as tropical beach footage reveals
-    gsap.to('.watermark-camouflage', {
-      opacity: 0,
-      duration: 1.4,
-      delay: 0.35,
-      ease: 'power2.out',
-    });
-
-    // Check for reduced motion preference
+    // Respect reduced-motion preference: quick simple fade into final layout
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setIsLoading(false);
       setIsTransitionDone(true);
+      gsap.to(['.header-nav-reveal', '.hero-fade-in'], {
+        opacity: 1,
+        y: 0,
+        duration: 0.3,
+        ease: 'none',
+      });
       return;
     }
+
+    // Step 1: Smoothly fade out understated loading indicator
+    if (loaderRef.current) {
+      gsap.to(loaderRef.current, {
+        opacity: 0,
+        scale: 0.85,
+        duration: 0.25,
+        ease: 'power2.out',
+        onComplete: () => {
+          setIsLoading(false);
+          setShowOpeningLogo(true);
+        },
+      });
+    } else {
+      setIsLoading(false);
+      setShowOpeningLogo(true);
+    }
+  };
+
+  // Coordinated Logo, Navigation, and Hero Opening Sequence
+  useEffect(() => {
+    if (!showOpeningLogo || hasRunOpeningRef.current) return;
+    hasRunOpeningRef.current = true;
 
     const floatingEl = floatingLogoRef.current;
     const targetEl = headerLogoTargetRef.current;
 
     if (!floatingEl || !targetEl) {
       setIsTransitionDone(true);
+      gsap.to('.hero-fade-in', { opacity: 1, y: 0, duration: 0.6 });
       return;
     }
 
-    // Measure exact geometry
+    // Measure exact geometry to the stable header target slot
     const targetRect = targetEl.getBoundingClientRect();
     const currentRect = floatingEl.getBoundingClientRect();
 
@@ -86,62 +368,69 @@ export default function App() {
     const deltaY = targetCenterY - currentCenterY;
     const scaleFactor = targetRect.width / currentRect.width;
 
-    const tl = gsap.timeline({
-      delay: 0.55, // Graceful pause before starting movement
-      defaults: { ease: 'power2.inOut' },
-      onComplete: () => {
-        setIsTransitionDone(true);
-      },
-    });
+    const tl = gsap.timeline();
 
-    // Slower, graceful scale-down and glide into the top-left position (2.6s duration)
-    tl.to(floatingEl, {
-      x: deltaX,
-      y: deltaY,
-      scale: scaleFactor,
-      duration: 2.6,
-      force3D: true,
-    })
-      // Reveal hero headline, copy, and booking buttons as logo approaches destination
+    // 1. Logo appears with a subtle fade and gentle scale settle at moderate size
+    tl.fromTo(
+      floatingEl,
+      { opacity: 0, scale: 0.94 },
+      { opacity: 1, scale: 1.0, duration: 0.5, ease: 'power2.out' }
+    )
+      // 2. Brief breath to register the emblem
+      .to({}, { duration: 0.15 })
+      // 3. Smooth, continuous, restrained glide and shrink into header slot
+      .to(floatingEl, {
+        x: deltaX,
+        y: deltaY,
+        scale: scaleFactor,
+        duration: 1.5,
+        ease: 'power1.inOut',
+        force3D: true,
+        onComplete: () => {
+          // Seamlessly dock into header slot at exact moment logo finishes flight
+          setIsTransitionDone(true);
+        },
+      })
+      // 4. Reveal navbar links AND hero section AT THE SAME TIME when logo is almost at its position
+      .to(
+        '.header-nav-reveal',
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.4,
+          stagger: 0.03,
+          ease: 'power2.out',
+        },
+        '-=0.35'
+      )
       .to(
         '.hero-fade-in',
         {
           opacity: 1,
           y: 0,
-          duration: 1.0,
-          stagger: 0.14,
+          duration: 0.65,
+          stagger: 0.08,
           ease: 'power2.out',
         },
-        '-=1.0'
+        '<+=0.04'
+      )
+      // Fade out floating copy right as header copy is immediately active
+      .to(
+        floatingEl,
+        {
+          opacity: 0,
+          duration: 0.08,
+          ease: 'none',
+        },
+        '-=0.08'
       );
-  };
 
-  // Safe playback start
-  const startPlayback = async () => {
-    const video = videoRef.current;
-    if (!video) return;
+    return () => {
+      tl.kill();
+    };
+  }, [showOpeningLogo]);
 
-    try {
-      video.muted = true;
-      await video.play();
-      setAutoplayBlocked(false);
-      runOpeningAnimation();
-    } catch (err) {
-      console.warn('Autoplay restricted by browser policy:', err);
-      setAutoplayBlocked(true);
-      runOpeningAnimation();
-    }
-  };
-
-  // Interactive entry click handler (allows user to immediately explore anytime)
-  const handleInteractiveEnter = () => {
-    if (animStartedRef.current) return;
-    setLoadProgress(100);
-    setIsVideoLoaded(true);
-    startPlayback();
-  };
-
-  // Video loading, buffering lifecycle and bulletproof looping coordination
+  // Video first-frame readiness, buffering lifecycle, and looping coordination
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -149,7 +438,7 @@ export default function App() {
     video.muted = true;
     let loopRafId = null;
 
-    // Helper: Seek back to loop start (skipping the beige intro) and ensure playback continues
+    // Helper: Seek back to loop start and continue playing
     const loopVideo = () => {
       video.currentTime = LOOP_START;
       if (video.paused) {
@@ -157,19 +446,15 @@ export default function App() {
       }
     };
 
-    // Continuous high-frequency loop monitor via requestAnimationFrame
-    // Catches loop boundary precisely before reaching end-of-file, preventing freeze
+    // Continuous loop check: loops at 6.9s (1.1s before end) so leaves never freeze
     const checkLoopPlayback = () => {
       if (video && animStartedRef.current) {
-        if (video.currentTime >= 2.0) {
+        if (video.currentTime >= 3.0) {
           introPassedRef.current = true;
         }
-
-        // When the established tropical beach scene reaches the loop end, seamlessly cycle
         if (video.currentTime >= LOOP_END) {
           loopVideo();
-        } else if (introPassedRef.current && video.currentTime < 1.7 && video.currentTime > 0) {
-          // Never permit re-showing the beige intro or leaf reveal once initial playback began
+        } else if (introPassedRef.current && video.currentTime < 2.8 && video.currentTime > 0) {
           loopVideo();
         }
       }
@@ -177,104 +462,77 @@ export default function App() {
     };
     loopRafId = requestAnimationFrame(checkLoopPlayback);
 
-    // timeupdate fallback listener
     const handleTimeUpdate = () => {
-      if (video.currentTime >= 2.0) {
+      if (video.currentTime >= 3.0) {
         introPassedRef.current = true;
       }
       if (video.currentTime >= LOOP_END) {
         loopVideo();
-      } else if (introPassedRef.current && video.currentTime < 1.7 && video.currentTime > 0) {
+      } else if (introPassedRef.current && video.currentTime < 2.8 && video.currentTime > 0) {
         loopVideo();
       }
     };
 
-    // ended fallback listener: In case background throttling or tab sleep allowed video to hit 8.0s
     const handleEnded = () => {
       introPassedRef.current = true;
       loopVideo();
     };
 
-    // seeked fallback: Ensure video plays immediately once seek finishes
     const handleSeeked = () => {
-      if (animStartedRef.current && video.paused && !document.hidden) {
+      if (animStartedRef.current && video.paused) {
         video.play().catch(console.warn);
       }
     };
 
-    // pause fallback: If paused unexpectedly while document is visible, resume playing
     const handlePause = () => {
-      if (animStartedRef.current && !document.hidden && !video.ended) {
+      if (animStartedRef.current && !document.hidden) {
         video.play().catch(console.warn);
-      }
-    };
-
-    let progressTimer = null;
-    let autoStartTimer = null;
-    let currentPct = 0;
-
-    const getBufferPct = () => {
-      if (video.buffered.length > 0 && video.duration > 0) {
-        const end = video.buffered.end(video.buffered.length - 1);
-        return Math.round((end / video.duration) * 100);
-      }
-      return 0;
-    };
-
-    // Smooth progress timer coordinating with real buffering state
-    progressTimer = setInterval(() => {
-      if (animStartedRef.current) {
-        clearInterval(progressTimer);
-        return;
-      }
-
-      const bufferPct = getBufferPct();
-      let target = Math.max(bufferPct, 35);
-
-      if (video.readyState >= 3) {
-        target = 100;
-      } else if (video.readyState >= 2) {
-        target = Math.max(target, 80);
-      }
-
-      if (currentPct < target) {
-        currentPct += Math.max(1, Math.round((target - currentPct) * 0.22));
-      }
-
-      if (currentPct >= 100 && (video.readyState >= 3 || bufferPct >= 80)) {
-        currentPct = 100;
-        setLoadProgress(100);
-        setIsVideoLoaded(true);
-        clearInterval(progressTimer);
-
-        // Auto-start once loaded after a brief satisfying pause
-        autoStartTimer = setTimeout(() => {
-          if (!animStartedRef.current) {
-            startPlayback();
-          }
-        }, 500);
-      } else {
-        setLoadProgress(Math.min(96, currentPct));
-      }
-    }, 45);
-
-    const handleCanPlay = () => {
-      if (video.readyState >= 3) {
-        setIsVideoLoaded(true);
       }
     };
 
     video.addEventListener('timeupdate', handleTimeUpdate);
-    video.addEventListener('canplay', handleCanPlay);
     video.addEventListener('ended', handleEnded);
     video.addEventListener('seeked', handleSeeked);
     video.addEventListener('pause', handlePause);
 
-    if (video.readyState >= 3) {
-      setIsVideoLoaded(true);
+    // Wait until video can display its first frame and begin playback before starting animation
+    let started = false;
+    const tryStartPlayback = async () => {
+      if (started) return;
+      started = true;
+      try {
+        video.muted = true;
+        await video.play();
+        setAutoplayBlocked(false);
+        startOpeningSequence();
+      } catch (err) {
+        console.warn('Autoplay restricted or video failed to play:', err);
+        setAutoplayBlocked(true);
+        // Fallback: Continue opening animation over existing poster
+        startOpeningSequence();
+      }
+    };
+
+    // Check if first frame is already displayable
+    if (video.readyState >= 2) {
+      tryStartPlayback();
+    } else {
+      video.addEventListener('loadeddata', tryStartPlayback, { once: true });
+      video.addEventListener('canplay', tryStartPlayback, { once: true });
+      video.addEventListener('error', () => {
+        // Fallback if video fails to load
+        tryStartPlayback();
+      }, { once: true });
     }
 
-    // Visibility change handling: Pause in background tab, resume smoothly at loop start when returning
+    // Safety fallback: Avoid leaving loader indefinitely if network or browser stalls
+    const fallbackTimer = setTimeout(() => {
+      if (!started) {
+        tryStartPlayback();
+      }
+    }, 1800);
+
+    // Visibility change handling
     const handleVisibilityChange = () => {
       if (document.hidden) {
         video.pause();
@@ -289,26 +547,35 @@ export default function App() {
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
-      if (loopRafId) {
-        cancelAnimationFrame(loopRafId);
-      }
-      clearInterval(progressTimer);
-      clearTimeout(autoStartTimer);
+      if (loopRafId) cancelAnimationFrame(loopRafId);
+      clearTimeout(fallbackTimer);
       video.removeEventListener('timeupdate', handleTimeUpdate);
-      video.removeEventListener('canplay', handleCanPlay);
       video.removeEventListener('ended', handleEnded);
       video.removeEventListener('seeked', handleSeeked);
       video.removeEventListener('pause', handlePause);
+      video.removeEventListener('loadeddata', tryStartPlayback);
+      video.removeEventListener('canplay', tryStartPlayback);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       if (floatingLogoRef.current) {
         gsap.killTweensOf(floatingLogoRef.current);
       }
-      gsap.killTweensOf('.opening-loader');
       gsap.killTweensOf('.watermark-camouflage');
-      gsap.killTweensOf('.header-fade-in');
+      gsap.killTweensOf('.header-nav-reveal');
       gsap.killTweensOf('.hero-fade-in');
     };
   }, []);
+
+  // Lock scrolling during opening animation so no scrollbar appears and hero remains immersive
+  useEffect(() => {
+    if (!isTransitionDone) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isTransitionDone]);
 
   // Track scroll position to ensure sticky header displays beautifully on manual scroll
   useEffect(() => {
@@ -335,12 +602,12 @@ export default function App() {
   return (
     <div className="min-h-screen w-full bg-[#F8F5EE] text-[#16373F] font-sans antialiased selection:bg-[#E7D4B3] selection:text-[#16373F]">
       {/* =========================================================================
-          1. HEADER (Translucent Frosted Glass, Invisible at Top, Appears on Scroll)
+          1. HEADER (Appears after logo scale-down; translucent bar on scroll; ENG/THAI language toggle)
           ========================================================================= */}
       <header
-        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-500 ${
+        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 pointer-events-auto ${
           isScrolled
-            ? 'bg-[#16373F]/65 backdrop-blur-md sm:backdrop-blur-lg border-b border-[#E7D4B3]/25 shadow-lg shadow-[#16373F]/15 py-0'
+            ? 'bg-[#FAF8F5]/85 backdrop-blur-md border-b border-[#E7D4B3]/50 shadow-sm shadow-[#2D2319]/5 py-0'
             : 'bg-transparent border-transparent shadow-none py-1.5'
         }`}
       >
@@ -356,11 +623,11 @@ export default function App() {
               ref={headerLogoTargetRef}
               className="relative w-12 h-12 sm:w-13 sm:h-13 flex-shrink-0 flex items-center justify-center"
             >
-              {/* Actual image asset revealed once transition completes */}
+              {/* Actual image asset revealed once transition completes without any delay or blink */}
               <img
                 src={LOGO_SRC}
                 alt="The Khaosan Poshtel"
-                className={`w-full h-full object-contain transition-opacity duration-500 ${
+                className={`w-full h-full object-contain ${
                   isTransitionDone ? 'opacity-100' : 'opacity-0'
                 }`}
                 draggable={false}
@@ -368,97 +635,149 @@ export default function App() {
             </div>
 
             {/* Brand Typography */}
-            <div
-              className={`flex flex-col transition-opacity duration-500 ${
-                isTransitionDone ? 'opacity-100' : 'opacity-0'
-              }`}
-            >
-              <span className="font-display font-bold tracking-wider text-base sm:text-lg text-[#E7D4B3] leading-tight group-hover:text-[#FAF8F5] transition-colors drop-shadow-sm">
+            <div className={`flex flex-col header-nav-reveal ${!isTransitionDone ? 'opacity-0 -translate-y-1' : 'opacity-100 translate-y-0'}`}>
+              <span className="font-display font-bold tracking-wider text-base sm:text-lg text-[#2D2319] leading-tight group-hover:text-[#8C6D3B] transition-colors drop-shadow-xs">
                 THE KHAOSAN POSHTEL
               </span>
-              <span className="font-sans text-[10px] tracking-widest uppercase text-[#E7D4B3]/80 font-medium drop-shadow-xs">
-                Bangkok · Boutique Hostel
+              <span className="font-sans text-[10px] tracking-widest uppercase text-[#7A6A5C] font-semibold drop-shadow-xs">
+                {t.brandSubtitle}
               </span>
             </div>
           </a>
 
-          {/* Desktop Navigation Links: Invisible at first, appear when scrolled down */}
+          {/* Desktop Navigation Links */}
           <nav
-            className={`hidden md:flex items-center gap-8 transition-all duration-500 ${
-              isScrolled
-                ? 'opacity-100 translate-y-0 pointer-events-auto'
-                : 'opacity-0 -translate-y-2 pointer-events-none'
-            }`}
+            className={`hidden md:flex items-center gap-7 header-nav-reveal ${!isTransitionDone ? 'opacity-0 -translate-y-1' : 'opacity-100 translate-y-0'}`}
             aria-label="Main Navigation"
           >
-            {['About', 'Stay', 'Experience', 'Location'].map((item) => (
+            {[
+              { id: 'about', label: t.about },
+              { id: 'stay', label: t.stay },
+              { id: 'experience', label: t.experience },
+              { id: 'location', label: t.location },
+            ].map((item) => (
               <a
-                key={item}
-                href={`#${item.toLowerCase()}`}
-                className="font-medium text-sm tracking-wide text-[#E7D4B3]/90 hover:text-[#FAF8F5] transition-colors duration-200 relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#E7D4B3] hover:after:w-full after:transition-all after:duration-300"
+                key={item.id}
+                href={`#${item.id}`}
+                className="font-medium text-sm tracking-wide text-[#2D2319] hover:text-[#8C6D3B] transition-colors duration-200 relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#B89058] hover:after:w-full after:transition-all after:duration-300 drop-shadow-xs"
               >
-                {item}
+                {item.label}
               </a>
             ))}
           </nav>
 
-          {/* Header CTA Button: Invisible at first, appears when scrolled down */}
-          <div
-            className={`hidden md:flex items-center transition-all duration-500 ${
-              isScrolled
-                ? 'opacity-100 translate-y-0 pointer-events-auto'
-                : 'opacity-0 -translate-y-2 pointer-events-none'
-            }`}
-          >
+          {/* Header Action Area: Language Switcher (ENG | THAI) + Primary CTA */}
+          <div className={`hidden md:flex items-center gap-4 header-nav-reveal ${!isTransitionDone ? 'opacity-0 -translate-y-1' : 'opacity-100 translate-y-0'}`}>
+            {/* Language Switcher */}
+            <div className="flex items-center rounded-full bg-[#FAF8F5]/85 backdrop-blur-sm p-0.5 border border-[#E7D4B3]/60 shadow-xs">
+              <button
+                type="button"
+                onClick={() => setLanguage('en')}
+                className={`px-3 py-1 rounded-full text-xs font-semibold tracking-wide transition-all duration-200 cursor-pointer ${
+                  language === 'en'
+                    ? 'bg-[#2D2319] text-[#FAF8F5] shadow-xs'
+                    : 'text-[#6A5A4D] hover:text-[#2D2319]'
+                }`}
+                aria-label="Switch language to English"
+                title="English"
+              >
+                ENG
+              </button>
+              <button
+                type="button"
+                onClick={() => setLanguage('th')}
+                className={`px-3 py-1 rounded-full text-xs font-semibold tracking-wide transition-all duration-200 cursor-pointer ${
+                  language === 'th'
+                    ? 'bg-[#2D2319] text-[#FAF8F5] shadow-xs'
+                    : 'text-[#6A5A4D] hover:text-[#2D2319]'
+                }`}
+                aria-label="Switch language to Thai"
+                title="ภาษาไทย"
+              >
+                THAI
+              </button>
+            </div>
+
+            {/* Header CTA Button */}
             <a
               href="#book"
-              className="inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-[#E7D4B3] text-[#16373F] text-sm font-semibold tracking-wide shadow-sm hover:bg-[#FAF8F5] hover:shadow-md active:scale-98 transition-all duration-200"
+              className="inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-[#2D2319] text-[#FAF8F5] text-sm font-semibold tracking-wide shadow-sm hover:bg-[#433527] hover:shadow-md active:scale-98 transition-all duration-200"
             >
-              Book Your Stay
+              {t.bookStay}
             </a>
           </div>
 
-          {/* Mobile Menu Toggle Button: Active when scrolled */}
-          <button
-            type="button"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className={`md:hidden p-2 rounded-lg text-[#E7D4B3] hover:bg-[#E7D4B3]/15 transition-all duration-300 ${
-              isScrolled ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-            }`}
-            aria-label="Toggle navigation menu"
-            aria-expanded={mobileMenuOpen}
-          >
-            <svg className="w-6 h-6 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="2">
-              {mobileMenuOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-              )}
-            </svg>
-          </button>
+          {/* Mobile Right Controls: Language Switcher (ENG | THAI) + Menu Toggle */}
+          <div className={`md:hidden flex items-center gap-2.5 header-nav-reveal ${!isTransitionDone ? 'opacity-0 -translate-y-1' : 'opacity-100 translate-y-0'}`}>
+            <div className="flex items-center rounded-full bg-[#FAF8F5]/85 backdrop-blur-sm p-0.5 border border-[#E7D4B3]/60 shadow-xs">
+              <button
+                type="button"
+                onClick={() => setLanguage('en')}
+                className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold transition-all ${
+                  language === 'en'
+                    ? 'bg-[#2D2319] text-[#FAF8F5]'
+                    : 'text-[#6A5A4D]'
+                }`}
+              >
+                ENG
+              </button>
+              <button
+                type="button"
+                onClick={() => setLanguage('th')}
+                className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold transition-all ${
+                  language === 'th'
+                    ? 'bg-[#2D2319] text-[#FAF8F5]'
+                    : 'text-[#6A5A4D]'
+                }`}
+              >
+                THAI
+              </button>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="p-2 rounded-lg text-[#2D2319] hover:bg-[#E7D4B3]/30 transition-colors"
+              aria-label="Toggle navigation menu"
+              aria-expanded={mobileMenuOpen}
+            >
+              <svg className="w-6 h-6 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="2">
+                {mobileMenuOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                )}
+              </svg>
+            </button>
+          </div>
         </div>
 
         {/* Mobile Navigation Drawer */}
-        {mobileMenuOpen && isScrolled && (
-          <div className="md:hidden bg-[#16373F]/90 backdrop-blur-lg border-b border-[#E7D4B3]/30 px-6 py-6 shadow-2xl animate-in slide-in-from-top-4 duration-200">
+        {mobileMenuOpen && (
+          <div className="md:hidden bg-[#FAF8F5]/98 backdrop-blur-xl border-b border-[#E7D4B3]/60 px-6 py-6 shadow-2xl animate-in slide-in-from-top-4 duration-200">
             <div className="flex flex-col space-y-4">
-              {['About', 'Stay', 'Experience', 'Location'].map((item) => (
+              {[
+                { id: 'about', label: t.about },
+                { id: 'stay', label: t.stay },
+                { id: 'experience', label: t.experience },
+                { id: 'location', label: t.location },
+              ].map((item) => (
                 <a
-                  key={item}
-                  href={`#${item.toLowerCase()}`}
+                  key={item.id}
+                  href={`#${item.id}`}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="font-display font-medium text-base text-[#E7D4B3] hover:text-[#FAF8F5] py-2 border-b border-[#E7D4B3]/15"
+                  className="font-display font-medium text-base text-[#2D2319] hover:text-[#8C6D3B] py-2 border-b border-[#E7D4B3]/30"
                 >
-                  {item}
+                  {item.label}
                 </a>
               ))}
               <div className="pt-3">
                 <a
                   href="#book"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full inline-flex items-center justify-center px-5 py-3 rounded-full bg-[#E7D4B3] text-[#16373F] text-sm font-semibold tracking-wide shadow-md hover:bg-[#FAF8F5]"
+                  className="w-full inline-flex items-center justify-center px-5 py-3 rounded-full bg-[#2D2319] text-[#FAF8F5] text-sm font-semibold tracking-wide shadow-md hover:bg-[#433527]"
                 >
-                  Book Your Stay
+                  {t.bookStay}
                 </a>
               </div>
             </div>
@@ -467,89 +786,57 @@ export default function App() {
       </header>
 
       {/* =========================================================================
-          OPENING FLOATING LOGO & INTERACTIVE LUXURY LOADER
+          UNDERSTATED LOADING INDICATOR
+          Small, calm, on-brand indicator while the background video buffers its first frame
           ========================================================================= */}
-      {!isTransitionDone && !isScrolled && (
+      {isLoading && (
         <div
-          onClick={handleInteractiveEnter}
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center p-4 cursor-pointer"
+          ref={loaderRef}
+          className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none"
+          aria-live="polite"
+          aria-label="Loading video"
         >
-          {/* Centered Logo Emblem */}
+          <div className="w-8 h-8 rounded-full border-2 border-[#E7D4B3]/30 border-t-[#E7D4B3] animate-spin shadow-sm" />
+        </div>
+      )}
+
+      {/* =========================================================================
+          OPENING FLOATING LOGO
+          Appears centered at moderate size with a subtle fade and scale settle,
+          then smoothly glides and shrinks into the navigation bar
+          ========================================================================= */}
+      {showOpeningLogo && (
+        <div
+          className={`fixed inset-0 z-50 flex items-center justify-center pointer-events-none transition-opacity duration-300 ${
+            isTransitionDone ? 'opacity-0' : 'opacity-100'
+          }`}
+        >
           <div
             ref={floatingLogoRef}
-            className="w-[280px] sm:w-[360px] md:w-[420px] max-w-[82vw] h-auto will-change-transform group transition-transform duration-300 hover:scale-102"
+            className="w-[200px] sm:w-[225px] md:w-[245px] max-w-[62vw] h-auto will-change-transform opacity-0"
             style={{
-              filter: 'drop-shadow(0 14px 30px rgba(22, 55, 63, 0.28)) drop-shadow(0 2px 6px rgba(0, 0, 0, 0.15))',
+              filter: 'drop-shadow(0 10px 24px rgba(45, 35, 25, 0.18)) drop-shadow(0 2px 6px rgba(0, 0, 0, 0.08))',
             }}
-            title="Click anywhere to enter The Khaosan Poshtel"
           >
             <img
               src={LOGO_SRC}
-              alt="The Khaosan Poshtel Opening Emblem"
-              className="w-full h-auto object-contain select-none pointer-events-none"
+              alt="The Khaosan Poshtel Emblem"
+              className="w-full h-auto object-contain select-none"
               draggable={false}
             />
-          </div>
-
-          {/* Interactive Luxury Loading Capsule */}
-          <div
-            ref={loaderContainerRef}
-            className="opening-loader mt-8 flex flex-col items-center select-none"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleInteractiveEnter();
-            }}
-          >
-            <button
-              type="button"
-              className="group relative flex items-center gap-3 px-6 py-2.5 rounded-full bg-[#16373F]/90 backdrop-blur-md border border-[#E7D4B3]/40 shadow-xl hover:bg-[#16373F] hover:border-[#E7D4B3] hover:scale-103 active:scale-98 transition-all duration-300 cursor-pointer"
-            >
-              {/* Spinner or ready indicator */}
-              <div className="relative w-5 h-5 flex items-center justify-center">
-                {loadProgress < 100 ? (
-                  <svg className="w-5 h-5 animate-spin text-[#E7D4B3]" viewBox="0 0 24 24" fill="none">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    />
-                  </svg>
-                ) : (
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#E7D4B3] group-hover:scale-125 transition-transform" />
-                )}
-              </div>
-
-              {/* Status Text & Progress */}
-              <div className="flex flex-col text-left">
-                <span className="font-sans text-xs tracking-wider font-semibold text-[#E7D4B3] uppercase">
-                  {loadProgress < 100 ? `Loading Sanctuary · ${loadProgress}%` : 'Enter The Poshtel →'}
-                </span>
-                <span className="text-[10px] text-[#E7D4B3]/75 font-normal">
-                  {loadProgress < 100 ? 'Preparing your tropical retreat' : 'Click anywhere to begin'}
-                </span>
-              </div>
-            </button>
-
-            {/* Fine Golden Progress Line */}
-            <div className="w-48 sm:w-56 h-1 mt-3 bg-[#16373F]/30 backdrop-blur-sm rounded-full overflow-hidden border border-[#E7D4B3]/20">
-              <div
-                className="h-full bg-gradient-to-r from-[#E7D4B3] via-[#FAF8F5] to-[#E7D4B3] transition-all duration-300 rounded-full"
-                style={{ width: `${loadProgress}%` }}
-              />
-            </div>
           </div>
         </div>
       )}
 
       {/* =========================================================================
-          2. HERO SECTION (Full-bleed tropical video, balanced composition, welcoming copy)
+          2. HERO SECTION
+          (Vertically centered composition so text never drifts downward on large screens)
           ========================================================================= */}
       <section
         id="top"
-        className="relative w-full h-screen min-h-[640px] flex items-end justify-center overflow-hidden bg-[#E7D4B3] pt-20"
+        className="relative w-full h-screen min-h-[640px] flex items-center justify-center overflow-hidden bg-[#0E1614] pt-16 pb-8"
       >
-        {/* Full-bleed background video without decorative zoom or transform */}
+        {/* Full-bleed background video */}
         <video
           ref={videoRef}
           src={VIDEO_SRC}
@@ -566,21 +853,28 @@ export default function App() {
           className="hero-video absolute inset-0 z-0 pointer-events-none select-none"
         />
 
-        {/* Camouflage block over Gemini watermark during full-screen opening */}
+        {/* Localized blur and dark camouflage patch over the bottom-right Gemini watermark */}
         <div
-          ref={watermarkMaskRef}
-          className="watermark-camouflage absolute pointer-events-none z-10"
+          className="absolute bottom-0 right-0 z-15 pointer-events-none w-56 h-32"
           style={{
-            right: '5%',
-            bottom: '10%',
-            width: '240px',
-            height: '170px',
-            background: 'radial-gradient(ellipse at center, #E4D0AD 0%, #E4D0AD 55%, rgba(228, 208, 173, 0) 100%)',
-            opacity: isTransitionDone ? 0 : 1,
-            transition: 'opacity 1.2s ease-out',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+            maskImage: 'radial-gradient(ellipse at 100% 100%, black 50%, transparent 85%)',
+            WebkitMaskImage: 'radial-gradient(ellipse at 100% 100%, black 50%, transparent 85%)',
+            background: 'radial-gradient(ellipse at 100% 100%, rgba(14, 22, 20, 0.75) 0%, transparent 80%)',
           }}
           aria-hidden="true"
         />
+
+        {/* Bottom-right on-brand venue location pill that squarely covers the AI watermark */}
+        <div className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 z-20 pointer-events-none select-none">
+          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#11262B]/85 backdrop-blur-md border border-[#E7D4B3]/40 shadow-lg text-[#E7D4B3]">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#E7D4B3] animate-pulse" />
+            <span className="font-sans text-[11px] tracking-wider uppercase font-semibold">
+              Soi Rambuttri · Bangkok
+            </span>
+          </div>
+        </div>
 
         {/* Static poster fallback for reduced motion preference */}
         <div
@@ -588,30 +882,30 @@ export default function App() {
           style={{ backgroundImage: `url(${POSTER_SRC})` }}
         />
 
-        {/* Gentle natural gradient overlay to ensure text readability while keeping beach scene clear */}
+        {/* Clean, cinematic neutral dark scrim overlay (no muddy beige-green gradient) */}
         <div
           className="absolute inset-0 z-10 pointer-events-none"
           style={{
             background:
-              'linear-gradient(180deg, rgba(248, 245, 238, 0.1) 0%, rgba(22, 55, 63, 0.0) 30%, rgba(22, 55, 63, 0.5) 80%, rgba(22, 55, 63, 0.75) 100%)',
+              'linear-gradient(180deg, rgba(10, 16, 18, 0.35) 0%, rgba(10, 16, 18, 0.05) 35%, rgba(10, 16, 18, 0.35) 70%, rgba(10, 16, 18, 0.72) 100%)',
           }}
         />
 
-        {/* Hero Foreground Content */}
-        <div className="relative z-20 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 sm:pb-20 text-center flex flex-col items-center">
+        {/* Hero Foreground Content - Optically centered on all display heights */}
+        <div className="relative z-20 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col items-center">
           <div className="hero-fade-in opacity-0 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FAF8F5]/85 backdrop-blur-sm border border-[#E7D4B3]/60 mb-5 shadow-sm">
             <span className="w-2 h-2 rounded-full bg-[#2A5542] animate-pulse" />
             <span className="text-xs font-semibold tracking-widest uppercase text-[#16373F]">
-              Soi Rambuttri · Bangkok
+              {t.heroTag}
             </span>
           </div>
 
           <h1 className="hero-fade-in opacity-0 font-display text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight text-[#F8F5EE] drop-shadow-md max-w-3xl leading-[1.15]">
-            A Tropical Sanctuary in Old Town Bangkok
+            {t.heroHeading}
           </h1>
 
           <p className="hero-fade-in opacity-0 mt-4 sm:mt-5 text-base sm:text-lg text-[#F8F5EE]/90 max-w-2xl font-normal leading-relaxed drop-shadow-sm">
-            Where island serenity meets Bangkok’s historic pulse. Experience thoughtful boutique comfort, lush palm-framed relaxation, and vibrant community steps from Khaosan Road.
+            {t.heroSubheading}
           </p>
 
           <div className="hero-fade-in opacity-0 mt-8 flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
@@ -619,13 +913,13 @@ export default function App() {
               href="#book"
               className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-[#E7D4B3] text-[#16373F] font-semibold text-sm tracking-wide shadow-lg hover:bg-[#F2ECE1] hover:scale-102 active:scale-98 transition-all duration-200"
             >
-              Book Your Stay
+              {t.bookStay}
             </a>
             <a
               href="#about"
               className="w-full sm:w-auto px-7 py-3.5 rounded-full bg-white/20 backdrop-blur-md text-[#F8F5EE] border border-white/40 font-medium text-sm tracking-wide hover:bg-white/30 transition-all duration-200"
             >
-              Explore The Poshtel
+              {t.explorePoshtel}
             </a>
           </div>
         </div>
@@ -658,7 +952,7 @@ export default function App() {
       </section>
 
       {/* =========================================================================
-          3. ABOUT SECTION (Authentic boutique hospitality & tropical identity)
+          3. ABOUT SECTION (Full Bilingual English / Thai Support)
           ========================================================================= */}
       <section id="about" className="py-24 sm:py-32 bg-[#F8F5EE] relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -673,10 +967,10 @@ export default function App() {
                 />
                 <div className="p-6 bg-[#FFFFFF]/90 backdrop-blur-xs border-t border-[#E7D4B3]/40">
                   <p className="font-display font-semibold text-sm text-[#16373F]">
-                    The Khaosan Poshtel Brand Artwork
+                    {t.aboutCardTitle}
                   </p>
                   <p className="text-xs text-[#63787D] mt-1">
-                    Celebrating tropical travel, freedom, and communal warmth in Phra Nakhon.
+                    {t.aboutCardDesc}
                   </p>
                 </div>
               </div>
@@ -685,19 +979,19 @@ export default function App() {
             {/* Text Narrative Column */}
             <div className="lg:col-span-7 order-1 lg:order-2">
               <span className="text-xs font-bold tracking-widest uppercase text-[#2A5542] block mb-3">
-                Boutique Hospitality & Island Ease
+                {t.aboutTag}
               </span>
               <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-[#16373F] leading-tight">
-                Where Bangkok’s Historic Soul Meets Tropical Serenity
+                {t.aboutHeading}
               </h2>
               <div className="w-16 h-1 bg-[#E7D4B3] mt-5 mb-8 rounded-full" />
 
               <p className="text-base sm:text-lg text-[#16373F]/80 leading-relaxed font-normal mb-6">
-                Nestled along the tree-lined pedestrian pathway of Soi Rambuttri, just moments from the world-famous Khaosan Road, <strong>The Khaosan Poshtel</strong> redefines boutique hostel living. We offer travelers an oasis of calm—warm sand tones, natural greenery, and thoughtful design that lets you recharge between Bangkok adventures.
+                {t.aboutP1}
               </p>
 
               <p className="text-base text-[#16373F]/75 leading-relaxed font-normal mb-10">
-                Operated by <strong>RK Hospitality Company Limited</strong>, our poshtel is built around hospitality, comfort, and community. Whether returning from ancient riverside temples or exploring lively night markets, you will find a relaxed haven to share stories, unwind, and feel right at home.
+                {t.aboutP2}
               </p>
 
               {/* Three Core Brand Pillars */}
@@ -705,28 +999,28 @@ export default function App() {
                 <div>
                   <h3 className="font-display font-semibold text-base text-[#16373F] mb-1.5 flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-[#E7D4B3]" />
-                    Tropical Calm
+                    {t.pillar1Title}
                   </h3>
                   <p className="text-xs text-[#63787D] leading-relaxed">
-                    Warm woods, sand palettes, and airy spaces designed for peaceful restoration.
+                    {t.pillar1Desc}
                   </p>
                 </div>
                 <div>
                   <h3 className="font-display font-semibold text-base text-[#16373F] mb-1.5 flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-[#2A5542]" />
-                    Social Spirit
+                    {t.pillar2Title}
                   </h3>
                   <p className="text-xs text-[#63787D] leading-relaxed">
-                    Inviting communal spaces that inspire connection and shared exploration.
+                    {t.pillar2Desc}
                   </p>
                 </div>
                 <div>
                   <h3 className="font-display font-semibold text-base text-[#16373F] mb-1.5 flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-[#D96B50]" />
-                    Old Town Heart
+                    {t.pillar3Title}
                   </h3>
                   <p className="text-xs text-[#63787D] leading-relaxed">
-                    Prime Rambuttri address steps from cultural landmarks, street food, and river ferries.
+                    {t.pillar3Desc}
                   </p>
                 </div>
               </div>
@@ -736,20 +1030,20 @@ export default function App() {
       </section>
 
       {/* =========================================================================
-          4. STAY SECTION (Inviting accommodation grounded only in confirmed details)
+          4. STAY SECTION (Full Bilingual Support)
           ========================================================================= */}
       <section id="stay" className="py-24 sm:py-32 bg-[#F2ECE1] border-y border-[#E7D4B3]/40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto text-center mb-16">
             <span className="text-xs font-bold tracking-widest uppercase text-[#2A5542] block mb-3">
-              Accommodation
+              {t.stayTag}
             </span>
             <h2 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-[#16373F]">
-              Thoughtfully Designed Rest
+              {t.stayHeading}
             </h2>
             <div className="w-16 h-1 bg-[#16373F] mx-auto mt-4 mb-6 rounded-full" />
             <p className="text-base text-[#16373F]/80 leading-relaxed font-normal">
-              Every space at The Khaosan Poshtel is crafted to balance restful privacy with a welcoming social atmosphere. Natural textures, crisp linens, and modern boutique amenities ensure restorative sleep in the center of Bangkok.
+              {t.staySubheading}
             </p>
           </div>
 
@@ -758,38 +1052,38 @@ export default function App() {
             <div className="bg-[#FFFFFF] rounded-2xl p-8 sm:p-10 shadow-soft border border-[#E7D4B3]/50 flex flex-col justify-between">
               <div>
                 <div className="inline-flex items-center px-3 py-1 rounded-full bg-[#E7D4B3]/40 text-[#16373F] text-xs font-semibold mb-6">
-                  Private Sanctuary
+                  {t.privateTag}
                 </div>
                 <h3 className="font-display text-2xl font-bold text-[#16373F] mb-3">
-                  Boutique Private Rooms
+                  {t.privateTitle}
                 </h3>
                 <p className="text-sm text-[#16373F]/75 leading-relaxed mb-6 font-normal">
-                  Serene private rooms curated for couples, solo travelers, and digital wanderers seeking calm solitude after days exploring Bangkok. Finished with warm sand tones, clean lines, and peaceful natural light.
+                  {t.privateDesc}
                 </p>
                 <ul className="space-y-3 mb-8 text-xs text-[#16373F]/85 font-medium">
                   <li className="flex items-center gap-2.5">
                     <svg className="w-4 h-4 text-[#2A5542] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
-                    Individual climate control & air-conditioning
+                    {t.privateFeat1}
                   </li>
                   <li className="flex items-center gap-2.5">
                     <svg className="w-4 h-4 text-[#2A5542] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
-                    Ensuite private bathroom with hot rain shower
+                    {t.privateFeat2}
                   </li>
                   <li className="flex items-center gap-2.5">
                     <svg className="w-4 h-4 text-[#2A5542] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
-                    Crisp hotel-grade linens and plush pillows
+                    {t.privateFeat3}
                   </li>
                   <li className="flex items-center gap-2.5">
                     <svg className="w-4 h-4 text-[#2A5542] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
-                    High-speed Wi-Fi and dedicated charging points
+                    {t.privateFeat4}
                   </li>
                 </ul>
               </div>
@@ -797,7 +1091,7 @@ export default function App() {
                 href="#book"
                 className="w-full inline-flex items-center justify-center px-6 py-3 rounded-xl bg-[#16373F] text-[#F8F5EE] text-sm font-medium hover:bg-[#2A5542] transition-colors"
               >
-                Inquire for Private Rooms
+                {t.privateBtn}
               </a>
             </div>
 
@@ -805,38 +1099,38 @@ export default function App() {
             <div className="bg-[#FFFFFF] rounded-2xl p-8 sm:p-10 shadow-soft border border-[#E7D4B3]/50 flex flex-col justify-between">
               <div>
                 <div className="inline-flex items-center px-3 py-1 rounded-full bg-[#2A5542]/15 text-[#2A5542] text-xs font-semibold mb-6">
-                  Social & Connected
+                  {t.dormTag}
                 </div>
                 <h3 className="font-display text-2xl font-bold text-[#16373F] mb-3">
-                  Curated Pod Dormitories
+                  {t.dormTitle}
                 </h3>
                 <p className="text-sm text-[#16373F]/75 leading-relaxed mb-6 font-normal">
-                  Thoughtfully designed shared dorms engineered for comfort, security, and quiet rest. Each pod provides personal space with dedicated privacy curtains and lockable storage.
+                  {t.dormDesc}
                 </p>
                 <ul className="space-y-3 mb-8 text-xs text-[#16373F]/85 font-medium">
                   <li className="flex items-center gap-2.5">
                     <svg className="w-4 h-4 text-[#2A5542] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
-                    Custom pod beds with blackout privacy curtains
+                    {t.dormFeat1}
                   </li>
                   <li className="flex items-center gap-2.5">
                     <svg className="w-4 h-4 text-[#2A5542] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
-                    Personal reading light and universal power outlets
+                    {t.dormFeat2}
                   </li>
                   <li className="flex items-center gap-2.5">
                     <svg className="w-4 h-4 text-[#2A5542] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
-                    Secure under-bed luggage lockers
+                    {t.dormFeat3}
                   </li>
                   <li className="flex items-center gap-2.5">
                     <svg className="w-4 h-4 text-[#2A5542] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
-                    Spotless shared bathrooms maintained continuously
+                    {t.dormFeat4}
                   </li>
                 </ul>
               </div>
@@ -844,7 +1138,7 @@ export default function App() {
                 href="#book"
                 className="w-full inline-flex items-center justify-center px-6 py-3 rounded-xl bg-[#E7D4B3] text-[#16373F] text-sm font-semibold hover:bg-[#D4BF9A] transition-colors"
               >
-                Inquire for Dorm Beds
+                {t.dormBtn}
               </a>
             </div>
           </div>
@@ -852,20 +1146,20 @@ export default function App() {
       </section>
 
       {/* =========================================================================
-          5. EXPERIENCE AND AMENITIES (Modest, authentic general copy)
+          5. EXPERIENCE AND AMENITIES (Full Bilingual Support)
           ========================================================================= */}
       <section id="experience" className="py-24 sm:py-32 bg-[#F8F5EE]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto text-center mb-16">
             <span className="text-xs font-bold tracking-widest uppercase text-[#2A5542] block mb-3">
-              Life at the Poshtel
+              {t.expTag}
             </span>
             <h2 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-[#16373F]">
-              Warm Hospitality & Everyday Ease
+              {t.expHeading}
             </h2>
             <div className="w-16 h-1 bg-[#E7D4B3] mx-auto mt-4 mb-6 rounded-full" />
             <p className="text-base text-[#16373F]/80 leading-relaxed font-normal">
-              Designed around effortless travel: relaxed communal spaces, friendly assistance, and the essentials you need to explore Bangkok comfortably.
+              {t.expSubheading}
             </p>
           </div>
 
@@ -878,10 +1172,10 @@ export default function App() {
                 </svg>
               </div>
               <h3 className="font-display font-semibold text-lg text-[#16373F] mb-2">
-                Tropical Courtyard
+                {t.amen1Title}
               </h3>
               <p className="text-xs text-[#63787D] leading-relaxed font-normal">
-                Breezy open spaces surrounded by natural greenery to read, enjoy morning coffee, or work remotely with reliable Wi-Fi.
+                {t.amen1Desc}
               </p>
             </div>
 
@@ -893,10 +1187,10 @@ export default function App() {
                 </svg>
               </div>
               <h3 className="font-display font-semibold text-lg text-[#16373F] mb-2">
-                Social Community
+                {t.amen2Title}
               </h3>
               <p className="text-xs text-[#63787D] leading-relaxed font-normal">
-                A naturally welcoming vibe where solo travelers and friends meet, share itineraries, and explore the city together.
+                {t.amen2Desc}
               </p>
             </div>
 
@@ -908,10 +1202,10 @@ export default function App() {
                 </svg>
               </div>
               <h3 className="font-display font-semibold text-lg text-[#16373F] mb-2">
-                Secure Storage
+                {t.amen3Title}
               </h3>
               <p className="text-xs text-[#63787D] leading-relaxed font-normal">
-                Safe baggage storage prior to check-in or post checkout so you can discover Bangkok unencumbered by bags.
+                {t.amen3Desc}
               </p>
             </div>
 
@@ -923,10 +1217,10 @@ export default function App() {
                 </svg>
               </div>
               <h3 className="font-display font-semibold text-lg text-[#16373F] mb-2">
-                Local Travel Tips
+                {t.amen4Title}
               </h3>
               <p className="text-xs text-[#63787D] leading-relaxed font-normal">
-                Authentic neighborhood recommendations for canal boats, street food stalls, quiet riverside temples, and night strolls.
+                {t.amen4Desc}
               </p>
             </div>
           </div>
@@ -934,33 +1228,33 @@ export default function App() {
       </section>
 
       {/* =========================================================================
-          6. LOCATION SECTION (Interactive Google Map & Authentic Address Details)
+          6. LOCATION SECTION (Interactive Street-Level Google Map & Full Bilingual Info)
           ========================================================================= */}
       <section id="location" className="py-24 sm:py-32 bg-[#F2ECE1] border-t border-[#E7D4B3]/40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mb-12">
             <span className="text-xs font-bold tracking-widest uppercase text-[#2A5542] block mb-3">
-              Location & Map
+              {t.locationTag}
             </span>
             <h2 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-[#16373F]">
-              Find Us on Soi Rambuttri, Bangkok
+              {t.locationHeading}
             </h2>
             <div className="w-16 h-1 bg-[#E7D4B3] mt-4 mb-4 rounded-full" />
             <p className="text-base text-[#16373F]/80 leading-relaxed font-normal">
-              Located at 92 Soi Rambutri in historic Phra Nakhon, Bangkok. Explore the interactive map below for our exact pinpoint and transit routes.
+              {t.locationSubheading}
             </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch">
-            {/* Interactive Google Map Embed */}
+            {/* Interactive Google Map Embed - Detailed Street Level View (z=19) */}
             <div className="lg:col-span-7 flex flex-col">
               <div className="relative w-full h-[400px] sm:h-[480px] rounded-2xl overflow-hidden border border-[#E7D4B3]/60 shadow-elevated group bg-[#E4D0AD]">
                 <iframe
-                  title="The Khaosan Poshtel Location Map"
-                  src="https://maps.google.com/maps?q=92+Soi+Rambutri,+Talat+Yot,+Phra+Nakhon,+Bangkok+10200&t=&z=16&ie=UTF8&iwloc=&output=embed"
+                  title="The Khaosan Poshtel Location Map - Soi Rambuttri"
+                  src="https://maps.google.com/maps?q=92+Soi+Rambutri,+Talat+Yot,+Phra+Nakhon,+Bangkok+10200&t=&z=19&ie=UTF8&iwloc=&output=embed"
                   className="w-full h-full border-0 filter saturate-95 contrast-105"
                   allowFullScreen=""
-                  loading="lazy"
+                  loading="eager"
                   referrerPolicy="no-referrer-when-downgrade"
                 />
                 {/* Floating Map Action Badge */}
@@ -971,7 +1265,7 @@ export default function App() {
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#16373F]/90 backdrop-blur-md text-[#E7D4B3] hover:text-[#FAF8F5] text-xs font-semibold shadow-lg hover:bg-[#16373F] active:scale-98 transition-all"
                   >
-                    <span>Open in Google Maps</span>
+                    <span>{t.openGoogleMaps}</span>
                     <svg className="w-3.5 h-3.5 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="2">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                     </svg>
@@ -985,10 +1279,10 @@ export default function App() {
               <div className="bg-[#FFFFFF] rounded-2xl p-6 sm:p-8 shadow-elevated border border-[#E7D4B3]/60 h-full flex flex-col justify-between">
                 <div>
                   <span className="text-xs font-bold tracking-widest uppercase text-[#2A5542] block mb-2">
-                    Property Address & Entity
+                    {t.propEntityTag}
                   </span>
                   <h3 className="font-display text-2xl font-bold text-[#16373F] mb-6">
-                    The Khaosan Poshtel
+                    {t.propName}
                   </h3>
 
                   <div className="space-y-5 text-sm text-[#16373F]/85 border-t border-[#E7D4B3]/40 pt-5">
@@ -1000,12 +1294,12 @@ export default function App() {
                         </svg>
                       </div>
                       <div>
-                        <p className="font-semibold text-[#16373F] text-base">Address</p>
+                        <p className="font-semibold text-[#16373F] text-base">{t.addressLabel}</p>
                         <p className="text-sm text-[#63787D] mt-0.5 font-normal leading-relaxed">
-                          92 Soi Rambutri, Talat Yot, Phra Nakhon, Bangkok 10200
+                          {t.addressText}
                         </p>
                         <p className="text-xs text-[#63787D] mt-0.5">
-                          (Talat Yot Subdistrict, Phra Nakhon District)
+                          {t.addressSub}
                         </p>
                       </div>
                     </div>
@@ -1017,12 +1311,12 @@ export default function App() {
                         </svg>
                       </div>
                       <div>
-                        <p className="font-semibold text-[#16373F] text-base">Operating Entity</p>
+                        <p className="font-semibold text-[#16373F] text-base">{t.entityLabel}</p>
                         <p className="text-sm text-[#63787D] mt-0.5 font-normal leading-relaxed">
-                          RK Hospitality Company Limited
+                          {t.entityName}
                         </p>
                         <p className="text-xs text-[#63787D]">
-                          (RK Hospitality Co., Ltd.)
+                          {t.entitySub}
                         </p>
                       </div>
                     </div>
@@ -1034,9 +1328,9 @@ export default function App() {
                         </svg>
                       </div>
                       <div>
-                        <p className="font-semibold text-[#16373F]">Arrival Note</p>
+                        <p className="font-semibold text-[#16373F]">{t.arrivalLabel}</p>
                         <p className="text-xs text-[#63787D] mt-0.5 font-normal leading-relaxed">
-                          Show the address in Thai to taxi drivers: <em>92 ซอยรามบุตรี แขวงตลาดยอด เขตพระนคร กรุงเทพมหานคร 10200</em>
+                          {t.arrivalText}
                         </p>
                       </div>
                     </div>
@@ -1051,7 +1345,7 @@ export default function App() {
                     <svg className="w-4 h-4 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="2">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
                     </svg>
-                    <span>{addressCopied ? 'Address Copied!' : 'Copy Address for Taxi'}</span>
+                    <span>{addressCopied ? t.addressCopied : t.copyAddress}</span>
                   </button>
 
                   <a
@@ -1060,7 +1354,7 @@ export default function App() {
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#E7D4B3] text-[#16373F] hover:bg-[#FAF8F5] text-xs font-semibold transition-all shadow-xs active:scale-98"
                   >
-                    <span>Get Directions &rarr;</span>
+                    <span>{t.getDirections}</span>
                   </a>
                 </div>
               </div>
@@ -1070,7 +1364,7 @@ export default function App() {
       </section>
 
       {/* =========================================================================
-          8. BOOKING INQUIRY DRAWER/SECTION (Clearly marked demo booking action)
+          7. BOOKING INQUIRY SECTION (Full Bilingual English / Thai Support)
           ========================================================================= */}
       <section id="book" className="py-24 sm:py-32 bg-[#16373F] text-[#F8F5EE] relative overflow-hidden">
         {/* Subtle background ambient glow */}
@@ -1083,14 +1377,14 @@ export default function App() {
 
         <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <span className="text-xs font-bold tracking-widest uppercase text-[#E7D4B3] block mb-3">
-            Plan Your Bangkok Adventure
+            {t.bookTag}
           </span>
           <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-[#F8F5EE]">
-            Book Your Stay at The Khaosan Poshtel
+            {t.bookHeading}
           </h2>
           <div className="w-16 h-1 bg-[#E7D4B3] mx-auto mt-5 mb-6 rounded-full" />
           <p className="text-base text-[#F8F5EE]/80 max-w-2xl mx-auto font-normal leading-relaxed mb-12">
-            Experience our tropical boutique haven on Soi Rambuttri. Select your preferred dates below to check availability for private rooms and social pods.
+            {t.bookSubheading}
           </p>
 
           {/* Interactive Demo Reservation Box */}
@@ -1098,14 +1392,14 @@ export default function App() {
             <div className="flex items-center justify-between pb-6 mb-6 border-b border-[#E7D4B3]/40">
               <div>
                 <h3 className="font-display font-bold text-xl text-[#16373F]">
-                  Reservation Inquiry
+                  {t.bookFormTitle}
                 </h3>
                 <p className="text-xs text-[#63787D] mt-0.5">
                   92 Soi Rambutri, Talat Yot, Phra Nakhon, Bangkok 10200
                 </p>
               </div>
               <span className="px-3 py-1 rounded-full bg-[#E7D4B3]/40 text-[#16373F] text-xs font-semibold">
-                Demo Booking System
+                {t.bookDemoBadge}
               </span>
             </div>
 
@@ -1117,17 +1411,17 @@ export default function App() {
                   </svg>
                 </div>
                 <h4 className="font-display font-bold text-xl text-[#16373F] mb-2">
-                  Inquiry Received
+                  {t.bookSuccessTitle}
                 </h4>
                 <p className="text-sm text-[#63787D] max-w-md mx-auto mb-6">
-                  Thank you for your interest! In the production release, this action connects directly to The Khaosan Poshtel live reservation engine.
+                  {t.bookSuccessDesc}
                 </p>
                 <button
                   type="button"
                   onClick={() => setBookingSubmitted(false)}
-                  className="px-6 py-2.5 rounded-full bg-[#16373F] text-[#F8F5EE] text-xs font-medium hover:bg-[#2A5542] transition-colors"
+                  className="px-6 py-2.5 rounded-full bg-[#16373F] text-[#F8F5EE] text-xs font-medium hover:bg-[#2A5542] transition-colors cursor-pointer"
                 >
-                  Make Another Inquiry
+                  {t.bookAnotherBtn}
                 </button>
               </div>
             ) : (
@@ -1141,7 +1435,7 @@ export default function App() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   <div>
                     <label className="block text-xs font-semibold text-[#16373F] mb-1.5">
-                      Check-In Date
+                      {t.bookCheckIn}
                     </label>
                     <input
                       type="date"
@@ -1153,7 +1447,7 @@ export default function App() {
 
                   <div>
                     <label className="block text-xs font-semibold text-[#16373F] mb-1.5">
-                      Check-Out Date
+                      {t.bookCheckOut}
                     </label>
                     <input
                       type="date"
@@ -1165,39 +1459,39 @@ export default function App() {
 
                   <div>
                     <label className="block text-xs font-semibold text-[#16373F] mb-1.5">
-                      Accommodation Type
+                      {t.bookRoomType}
                     </label>
                     <select
                       className="w-full px-3.5 py-2.5 rounded-xl border border-[#E7D4B3] text-sm text-[#16373F] focus:outline-none focus:ring-2 focus:ring-[#16373F]/30 bg-[#F8F5EE]"
                     >
-                      <option>Boutique Private Room</option>
-                      <option>Curated Social Pod Dorm</option>
+                      <option>{t.bookPrivateOption}</option>
+                      <option>{t.bookDormOption}</option>
                     </select>
                   </div>
 
                   <div>
                     <label className="block text-xs font-semibold text-[#16373F] mb-1.5">
-                      Guests
+                      {t.bookGuests}
                     </label>
                     <select
                       className="w-full px-3.5 py-2.5 rounded-xl border border-[#E7D4B3] text-sm text-[#16373F] focus:outline-none focus:ring-2 focus:ring-[#16373F]/30 bg-[#F8F5EE]"
                     >
-                      <option>1 Guest</option>
-                      <option>2 Guests</option>
-                      <option>3+ Group Inquiry</option>
+                      <option>{t.bookGuest1}</option>
+                      <option>{t.bookGuest2}</option>
+                      <option>{t.bookGuest3}</option>
                     </select>
                   </div>
                 </div>
 
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
                   <p className="text-xs text-[#63787D]">
-                    * Note: This is an interactive demo of the booking flow.
+                    {t.bookNote}
                   </p>
                   <button
                     type="submit"
                     className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-[#16373F] text-[#F8F5EE] text-sm font-semibold tracking-wide hover:bg-[#2A5542] shadow-md transition-colors cursor-pointer"
                   >
-                    Check Availability (Demo)
+                    {t.bookSubmitBtn}
                   </button>
                 </div>
               </form>
@@ -1207,7 +1501,7 @@ export default function App() {
       </section>
 
       {/* =========================================================================
-          9. FOOTER (Brand name, address, operating company, confirmed details)
+          8. FOOTER (Brand name, address, operating company, full bilingual copy)
           ========================================================================= */}
       <footer className="bg-[#0D242A] text-[#F8F5EE]/80 py-16 border-t border-[#E7D4B3]/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -1225,14 +1519,14 @@ export default function App() {
                 </span>
               </div>
               <p className="text-xs text-[#F8F5EE]/70 max-w-md leading-relaxed font-normal">
-                A refined tropical boutique poshtel nestled along Soi Rambuttri in historic Phra Nakhon, Bangkok.
+                {t.footerDesc}
               </p>
               <div className="pt-2 text-xs text-[#E7D4B3] space-y-1">
                 <p>
-                  <strong className="text-[#F8F5EE]">Operating Entity:</strong> RK Hospitality Company Limited
+                  <strong className="text-[#F8F5EE]">{t.footerEntityLabel}</strong> RK Hospitality Company Limited
                 </p>
                 <p>
-                  <strong className="text-[#F8F5EE]">Address:</strong> 92 Soi Rambutri, Talat Yot, Phra Nakhon, Bangkok 10200
+                  <strong className="text-[#F8F5EE]">{t.footerAddressLabel}</strong> 92 Soi Rambutri, Talat Yot, Phra Nakhon, Bangkok 10200
                 </p>
               </div>
             </div>
@@ -1240,16 +1534,21 @@ export default function App() {
             {/* Quick in-page navigation anchors */}
             <div className="md:col-span-3 space-y-3">
               <h4 className="font-display font-semibold text-xs tracking-widest uppercase text-[#E7D4B3]">
-                Navigation
+                {t.footerNavTitle}
               </h4>
               <ul className="space-y-2 text-xs">
-                {['About', 'Stay', 'Experience', 'Location'].map((sec) => (
-                  <li key={sec}>
+                {[
+                  { id: 'about', label: t.about },
+                  { id: 'stay', label: t.stay },
+                  { id: 'experience', label: t.experience },
+                  { id: 'location', label: t.location },
+                ].map((item) => (
+                  <li key={item.id}>
                     <a
-                      href={`#${sec.toLowerCase()}`}
+                      href={`#${item.id}`}
                       className="hover:text-[#F8F5EE] transition-colors"
                     >
-                      {sec}
+                      {item.label}
                     </a>
                   </li>
                 ))}
@@ -1259,23 +1558,23 @@ export default function App() {
             {/* Inquiries */}
             <div className="md:col-span-3 space-y-3">
               <h4 className="font-display font-semibold text-xs tracking-widest uppercase text-[#E7D4B3]">
-                Reservations
+                {t.footerReservationsTitle}
               </h4>
               <p className="text-xs text-[#F8F5EE]/70 leading-relaxed font-normal">
-                Online bookings for The Khaosan Poshtel will launch through RK Hospitality Co., Ltd.
+                {t.footerResNotice}
               </p>
               <a
                 href="#book"
                 className="inline-block mt-2 text-xs font-semibold text-[#E7D4B3] hover:text-[#F8F5EE] underline underline-offset-4 transition-colors"
               >
-                Inquire About Availability &rarr;
+                {t.footerResLink}
               </a>
             </div>
           </div>
 
           <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-[11px] text-[#F8F5EE]/50 gap-4">
-            <p>© 2026 The Khaosan Poshtel. All rights reserved.</p>
-            <p>92 Soi Rambutri, Talat Yot Subdistrict, Phra Nakhon District, Bangkok 10200</p>
+            <p>{t.footerCopyright}</p>
+            <p>{t.footerFullAddress}</p>
           </div>
         </div>
       </footer>

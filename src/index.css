@@ -13,7 +13,7 @@ html {
   background-color: var(--poshtel-bg);
   color: var(--poshtel-teal);
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  overflow-x: clip;
+  overflow-x: hidden;
 }
 
 body {
@@ -23,6 +23,22 @@ body {
   background-color: var(--poshtel-bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Elegant boutique custom scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+}
+::-webkit-scrollbar-track {
+  background: #F8F5EE;
+}
+::-webkit-scrollbar-thumb {
+  background: #D8C7A8;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #B89058;
 }
 
 h1, h2, h3, h4, h5, h6 {
