@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --poshtel-bg: #F8F5EE;
+  --poshtel-teal: #16373F;
+  --poshtel-sand: #E7D4B3;
+}
+
+html {
+  scroll-behavior: smooth;
+  background-color: var(--poshtel-bg);
+  color: var(--poshtel-teal);
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  overflow-x: clip;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background-color: var(--poshtel-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Outfit', sans-serif;
+}
+
+/* Full-bleed hero video without decorative zoom */
+.hero-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+}
+
+/* On narrow portrait screens where showing the full scene matters (side leaves, beach, sky): */
+@media (max-width: 768px) and (orientation: portrait) {
+  .hero-video {
+    object-fit: contain;
+    object-position: center 22%;
+  }
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .hero-video {
+    display: none;
+  }
+}
