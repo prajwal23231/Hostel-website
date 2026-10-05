@@ -292,8 +292,6 @@ const TRANSLATIONS = {
 export default function App() {
   const [language, setLanguage] = useState('en');
   const t = TRANSLATIONS[language];
-  const [isLoading, setIsLoading] = useState(true);
-  const [showOpeningLogo, setShowOpeningLogo] = useState(false);
   const [isTransitionDone, setIsTransitionDone] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -302,24 +300,24 @@ export default function App() {
   const [autoplayBlocked, setAutoplayBlocked] = useState(false);
 
   // References for animation coordination
-  const loaderRef = useRef(null);
   const floatingLogoRef = useRef(null);
   const headerLogoTargetRef = useRef(null);
   const videoRef = useRef(null);
-  const animStartedRef = useRef(false);
   const introPassedRef = useRef(false);
-  const hasRunOpeningRef = useRef(false);
 
-  // Transition from loading state into logo reveal and coordinated page reveal
-  const startOpeningSequence = () => {
-    if (animStartedRef.current) return;
-    animStartedRef.current = true;
+  // Coordinated Logo, Navigation, and Hero Opening Sequence - Initiated immediately on mount
+  useEffect(() => {
+    if (isTransitionDone) return;
 
-    // Respect reduced-motion preference: quick simple fade into final layout
+    const floatingEl = floatingLogoRef.current;
+    const targetEl = headerLogoTargetRef.current;
+    const video = videoRef.current;
+
+    // Respect reduced-motion preference: instant dock into final layout
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      setIsLoading(false);
       setIsTransitionDone(true);
-      gsap.to(['.header-nav-reveal', '.hero-fade-in'], {
+      if (video) gsap.set(video, { opacity: 1 });
+      gsap.to(['.header-nav-reveal', '.hero-fade-in', '.hero-address-reveal'], {
         opacity: 1,
         y: 0,
         duration: 0.3,
@@ -328,122 +326,110 @@ export default function App() {
       return;
     }
 
-    // Step 1: Smoothly fade out understated loading indicator
-    if (loaderRef.current) {
-      gsap.to(loaderRef.current, {
-        opacity: 0,
-        scale: 0.85,
-        duration: 0.25,
-        ease: 'power2.out',
-        onComplete: () => {
-          setIsLoading(false);
-          setShowOpeningLogo(true);
-        },
-      });
-    } else {
-      setIsLoading(false);
-      setShowOpeningLogo(true);
-    }
-  };
-
-  // Coordinated Logo, Navigation, and Hero Opening Sequence
-  useEffect(() => {
-    if (!showOpeningLogo || hasRunOpeningRef.current) return;
-    hasRunOpeningRef.current = true;
-
-    const floatingEl = floatingLogoRef.current;
-    const targetEl = headerLogoTargetRef.current;
-
     if (!floatingEl || !targetEl) {
       setIsTransitionDone(true);
+      if (video) gsap.set(video, { opacity: 1 });
       gsap.fromTo(
-        '.hero-fade-in',
-        { opacity: 0, y: 24 },
-        { opacity: 1, y: 0, duration: 0.5, stagger: 0.06, ease: 'power2.out' }
+        ['.hero-fade-in', '.hero-address-reveal'],
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.6, stagger: 0.06, ease: 'power2.out' }
       );
       return;
     }
 
-    // Measure exact geometry to the stable header target slot
-    const targetRect = targetEl.getBoundingClientRect();
-    const currentRect = floatingEl.getBoundingClientRect();
+    const ctx = gsap.context(() => {
+      // Set initial visible state on floating logo immediately so it is 100% visible at t = 0
+      gsap.set(floatingEl, { opacity: 1, scale: 1 });
+      if (video) {
+        gsap.set(video, { opacity: 0 });
+        video.pause();
+        video.currentTime = 0;
+      }
 
-    const targetCenterX = targetRect.left + targetRect.width / 2;
-    const targetCenterY = targetRect.top + targetRect.height / 2;
-    const currentCenterX = currentRect.left + currentRect.width / 2;
-    const currentCenterY = currentRect.top + currentRect.height / 2;
+      // Measure exact geometry to the stable header target slot
+      const targetRect = targetEl.getBoundingClientRect();
+      const currentRect = floatingEl.getBoundingClientRect();
 
-    const deltaX = targetCenterX - currentCenterX;
-    const deltaY = targetCenterY - currentCenterY;
-    const scaleFactor = targetRect.width / currentRect.width;
+      const targetCenterX = targetRect.left + targetRect.width / 2;
+      const targetCenterY = targetRect.top + targetRect.height / 2;
+      const currentCenterX = currentRect.left + currentRect.width / 2;
+      const currentCenterY = currentRect.top + currentRect.height / 2;
 
-    const tl = gsap.timeline();
+      const deltaX = targetCenterX - currentCenterX;
+      const deltaY = targetCenterY - currentCenterY;
+      const scaleFactor = targetRect.width / currentRect.width;
 
-    // 1. Logo appears with a calm fade and gentle settle
-    tl.fromTo(
-      floatingEl,
-      { opacity: 0, scale: 0.94 },
-      { opacity: 1, scale: 1.0, duration: 0.55, ease: 'power2.out' }
-    )
-      // 2. Poised breath to register the emblem
-      .to({}, { duration: 0.3 })
-      // 3. Luxurious, graceful glide and shrink into header slot
-      .to(floatingEl, {
-        x: deltaX,
-        y: deltaY,
-        scale: scaleFactor,
-        duration: 1.25,
-        ease: 'power2.inOut',
-        force3D: true,
-        onComplete: () => {
-          // Seamlessly dock into header slot at exact moment logo finishes flight
-          setIsTransitionDone(true);
-        },
-      })
-      // 4. Reveal navbar links and hero section in smooth coordination
-      .to(
-        '.header-nav-reveal',
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.45,
-          stagger: 0.04,
-          ease: 'power2.out',
-        },
-        '-=0.4'
-      )
-      .fromTo(
-        '.hero-fade-in',
-        {
-          opacity: 0,
-          y: 20,
-        },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.75,
-          stagger: 0.07,
-          ease: 'power2.out',
-        },
-        '<+=0.04'
-      )
-      // Fade out floating copy right as header copy is immediately active
-      .to(
-        floatingEl,
-        {
-          opacity: 0,
-          duration: 0.08,
-          ease: 'none',
-        },
-        '-=0.08'
-      );
+      const tl = gsap.timeline({ delay: 0.1 });
+
+      // 1. Brief pause (0.15s) so the emblem is registered centered
+      tl.to({}, { duration: 0.15 })
+        // 2. Logo initiates the experience: video starts and fades in smoothly as logo starts flight
+        .add(() => {
+          if (video) {
+            video.currentTime = 0;
+            video.play().catch(console.warn);
+            gsap.to(video, { opacity: 1, duration: 0.85, ease: 'power2.out' });
+          }
+        }, 0.15)
+        // 3. Logo glides majestically into the header slot across 2.2s (synchronized with leaf entry)
+        .to(
+          floatingEl,
+          {
+            x: deltaX,
+            y: deltaY,
+            scale: scaleFactor,
+            duration: 2.2,
+            ease: 'power2.inOut',
+            force3D: true,
+            onComplete: () => {
+              // Seamlessly dock into header slot at exact moment logo finishes flight
+              setIsTransitionDone(true);
+            },
+          },
+          0.15
+        )
+        // 4. Reveal navbar links as logo is about to dock
+        .to(
+          '.header-nav-reveal',
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.55,
+            stagger: 0.04,
+            ease: 'power2.out',
+          },
+          '-=0.7'
+        )
+        // 5. Hero text and bottom-right black address badge glide in together as leaves complete entrance
+        .to(
+          ['.hero-fade-in', '.hero-address-reveal'],
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.85,
+            stagger: 0.06,
+            ease: 'power2.out',
+          },
+          '<+=0.05'
+        )
+        // Fade out floating copy right as header copy is locked in
+        .to(
+          floatingEl,
+          {
+            opacity: 0,
+            duration: 0.08,
+            ease: 'none',
+          },
+          '-=0.08'
+        );
+    });
 
     return () => {
-      tl.kill();
+      ctx.revert();
     };
-  }, [showOpeningLogo]);
+  }, []);
 
-  // Video first-frame readiness, buffering lifecycle, and looping coordination
+  // Video looping coordination and visibility management
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -474,59 +460,8 @@ export default function App() {
       loopVideo();
     };
 
-    const handleSeeked = () => {
-      if (animStartedRef.current && video.paused) {
-        video.play().catch(console.warn);
-      }
-    };
-
-    const handlePause = () => {
-      if (animStartedRef.current && !document.hidden) {
-        video.play().catch(console.warn);
-      }
-    };
-
     video.addEventListener('timeupdate', handleTimeUpdate);
     video.addEventListener('ended', handleEnded);
-    video.addEventListener('seeked', handleSeeked);
-    video.addEventListener('pause', handlePause);
-
-    // Wait until video can display its first frame and begin playback before starting animation
-    let started = false;
-    const tryStartPlayback = async () => {
-      if (started) return;
-      started = true;
-      try {
-        video.muted = true;
-        await video.play();
-        setAutoplayBlocked(false);
-        startOpeningSequence();
-      } catch (err) {
-        console.warn('Autoplay restricted or video failed to play:', err);
-        setAutoplayBlocked(true);
-        // Fallback: Continue opening animation over existing poster
-        startOpeningSequence();
-      }
-    };
-
-    // Check if first frame is already displayable
-    if (video.readyState >= 2) {
-      tryStartPlayback();
-    } else {
-      video.addEventListener('loadeddata', tryStartPlayback, { once: true });
-      video.addEventListener('canplay', tryStartPlayback, { once: true });
-      video.addEventListener('error', () => {
-        // Fallback if video fails to load
-        tryStartPlayback();
-      }, { once: true });
-    }
-
-    // Safety fallback: Ensure page reveals quickly (350ms) even on slow mobile networks
-    const fallbackTimer = setTimeout(() => {
-      if (!started) {
-        tryStartPlayback();
-      }
-    }, 350);
 
     // Visibility change handling
     const handleVisibilityChange = () => {
@@ -543,18 +478,13 @@ export default function App() {
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
-      clearTimeout(fallbackTimer);
       video.removeEventListener('timeupdate', handleTimeUpdate);
       video.removeEventListener('ended', handleEnded);
-      video.removeEventListener('seeked', handleSeeked);
-      video.removeEventListener('pause', handlePause);
-      video.removeEventListener('loadeddata', tryStartPlayback);
-      video.removeEventListener('canplay', tryStartPlayback);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       if (floatingLogoRef.current) {
         gsap.killTweensOf(floatingLogoRef.current);
       }
-      gsap.killTweensOf('.watermark-camouflage');
+      gsap.killTweensOf('.hero-address-reveal');
       gsap.killTweensOf('.header-nav-reveal');
       gsap.killTweensOf('.hero-fade-in');
     };
@@ -879,34 +809,17 @@ export default function App() {
       </header>
 
       {/* =========================================================================
-          UNDERSTATED LOADING INDICATOR
-          Small, calm, on-brand indicator while the background video buffers its first frame
-          ========================================================================= */}
-      {isLoading && (
-        <div
-          ref={loaderRef}
-          className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none"
-          aria-live="polite"
-          aria-label="Loading video"
-        >
-          <div className="w-8 h-8 rounded-full border-2 border-[#E7D4B3]/30 border-t-[#E7D4B3] animate-spin shadow-sm" />
-        </div>
-      )}
-
-      {/* =========================================================================
           OPENING FLOATING LOGO
-          Appears centered at moderate size with a subtle fade and scale settle,
-          then smoothly glides and shrinks into the navigation bar
+          Appears centered immediately on page load, initiates the animation,
+          then smoothly glides and scales into the navigation bar
           ========================================================================= */}
-      {showOpeningLogo && (
+      {!isTransitionDone && (
         <div
-          className={`fixed inset-0 z-50 flex items-center justify-center pointer-events-none transition-opacity duration-300 ${
-            isTransitionDone ? 'opacity-0' : 'opacity-100'
-          }`}
+          className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none"
         >
           <div
             ref={floatingLogoRef}
-            className="w-[200px] sm:w-[225px] md:w-[245px] max-w-[62vw] h-auto will-change-transform opacity-0"
+            className="w-[200px] sm:w-[225px] md:w-[245px] max-w-[62vw] h-auto will-change-transform opacity-100"
             style={{
               filter: 'drop-shadow(0 10px 24px rgba(45, 35, 25, 0.18)) drop-shadow(0 2px 6px rgba(0, 0, 0, 0.08))',
             }}
@@ -929,7 +842,7 @@ export default function App() {
         id="top"
         className="relative w-full h-[100dvh] min-h-[580px] max-h-[1100px] flex items-center justify-center overflow-hidden bg-[#EFE7D8] pt-20 pb-10"
       >
-        {/* Full-bleed background video with vibrant sunny brightness */}
+        {/* Full-bleed background video - fades in and begins playback when logo initiates motion */}
         <video
           ref={videoRef}
           src={VIDEO_SRC}
@@ -939,35 +852,34 @@ export default function App() {
           webkit-playsinline="true"
           x5-playsinline="true"
           preload="auto"
-          autoPlay
           onEnded={() => {
             if (videoRef.current) {
               videoRef.current.currentTime = LOOP_START;
               videoRef.current.play().catch(console.warn);
             }
           }}
-          className="hero-video absolute inset-0 z-0 pointer-events-none select-none brightness-115 contrast-[1.02] saturate-[1.08]"
+          className="hero-video absolute inset-0 z-0 pointer-events-none select-none opacity-0 brightness-115 contrast-[1.02] saturate-[1.08]"
         />
 
-        {/* Localized blur and light camouflage patch over the bottom-right watermark - hidden on smaller screens when location is not displayed */}
+        {/* Localized very light feathered darkspot & gentle smooth blur over the bottom-right watermark - hidden on smaller screens */}
         <div
-          className="hidden sm:block absolute bottom-0 right-0 z-15 pointer-events-none w-36 h-24 sm:w-56 sm:h-32"
+          className="hidden sm:block hero-address-reveal opacity-0 absolute bottom-0 right-0 z-15 pointer-events-none w-44 h-28 sm:w-60 sm:h-36"
           style={{
-            backdropFilter: 'blur(8px)',
-            WebkitBackdropFilter: 'blur(8px)',
-            maskImage: 'radial-gradient(ellipse at 100% 100%, black 50%, transparent 85%)',
-            WebkitMaskImage: 'radial-gradient(ellipse at 100% 100%, black 50%, transparent 85%)',
+            backdropFilter: 'blur(5px)',
+            WebkitBackdropFilter: 'blur(5px)',
+            maskImage: 'radial-gradient(ellipse at 100% 100%, black 25%, rgba(0,0,0,0.5) 55%, transparent 80%)',
+            WebkitMaskImage: 'radial-gradient(ellipse at 100% 100%, black 25%, rgba(0,0,0,0.5) 55%, transparent 80%)',
             background:
-              'radial-gradient(ellipse at 100% 100%, rgba(225, 210, 185, 0.40) 0%, rgba(235, 222, 198, 0.15) 50%, transparent 80%)',
+              'radial-gradient(ellipse at 100% 100%, rgba(16, 26, 23, 0.22) 0%, rgba(16, 26, 23, 0.09) 45%, transparent 75%)',
           }}
           aria-hidden="true"
         />
 
-        {/* Bottom-right on-brand venue location pill - light, warm, and elegant */}
+        {/* Bottom-right on-brand venue location pill - sleek black glass aesthetic, animated with hero sequence, hidden on smaller screens */}
         <div className="hidden sm:block absolute bottom-4 right-4 sm:bottom-6 sm:right-6 z-20 pointer-events-none select-none">
-          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FAF8F5]/90 backdrop-blur-md border border-[#E7D4B3]/70 shadow-md text-[#16373F]">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#2A5542] animate-pulse" />
-            <span className="font-sans text-[11px] tracking-wider uppercase font-semibold">
+          <div className="hero-address-reveal opacity-0 translate-y-3 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#11262B]/90 backdrop-blur-md border border-[#E7D4B3]/35 shadow-lg text-[#E7D4B3]">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#34D399] animate-pulse" />
+            <span className="font-sans text-[11px] tracking-wider uppercase font-semibold text-[#E7D4B3]">
               Soi Rambuttri · Bangkok
             </span>
           </div>
@@ -979,12 +891,12 @@ export default function App() {
           style={{ backgroundImage: `url(${STATIC_HERO_BG})` }}
         />
 
-        {/* Clean, bright sunny scrim overlay - perfectly balanced for legibility and vibrant daylight ambiance */}
+        {/* Clean, bright sunny scrim overlay - reduced top darkness for maximum daylight ambiance */}
         <div
           className="absolute inset-0 z-10 pointer-events-none"
           style={{
             background:
-              'linear-gradient(180deg, rgba(16, 35, 38, 0.20) 0%, rgba(16, 35, 38, 0.05) 18%, transparent 35%, transparent 65%, rgba(16, 35, 38, 0.08) 82%, rgba(16, 35, 38, 0.22) 100%)',
+              'linear-gradient(180deg, rgba(16, 35, 38, 0.11) 0%, rgba(16, 35, 38, 0.03) 16%, transparent 35%, transparent 65%, rgba(16, 35, 38, 0.08) 82%, rgba(16, 35, 38, 0.22) 100%)',
           }}
         />
 
