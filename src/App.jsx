@@ -686,22 +686,22 @@ export default function App() {
           ========================================================================= */}
       <header
         className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 pointer-events-auto ${
-          isScrolled
-            ? 'bg-[#FAF8F5]/85 backdrop-blur-md border-b border-[#E7D4B3]/50 shadow-sm shadow-[#2D2319]/5 py-0'
+          isScrolled || mobileMenuOpen
+            ? 'bg-[#FAF8F5]/95 backdrop-blur-md border-b border-[#E7D4B3]/50 shadow-sm shadow-[#2D2319]/5 py-0'
             : 'bg-gradient-to-b from-[#0A1012]/45 via-[#0A1012]/18 to-transparent border-transparent shadow-none py-1.5'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 h-18 sm:h-20 flex items-center justify-between gap-2">
           {/* Header Brand Area (Target for opening logo animation) */}
           <a
             href="#top"
-            className="flex items-center gap-3.5 group cursor-pointer"
+            className="flex items-center gap-2.5 sm:gap-3.5 group cursor-pointer min-w-0"
             aria-label="The Khaosan Poshtel - Back to top"
           >
             {/* Target logo container slot */}
             <div
               ref={headerLogoTargetRef}
-              className="relative w-12 h-12 sm:w-13 sm:h-13 flex-shrink-0 flex items-center justify-center"
+              className="relative w-10 h-10 sm:w-12 sm:h-12 md:w-13 md:h-13 flex-shrink-0 flex items-center justify-center"
             >
               {/* Actual image asset revealed once transition completes without any delay or blink */}
               <img
@@ -715,19 +715,19 @@ export default function App() {
             </div>
 
             {/* Brand Typography */}
-            <div className={`flex flex-col header-nav-reveal ${!isTransitionDone ? 'opacity-0 -translate-y-1' : 'opacity-100 translate-y-0'}`}>
+            <div className={`flex flex-col min-w-0 header-nav-reveal ${!isTransitionDone ? 'opacity-0 -translate-y-1' : 'opacity-100 translate-y-0'}`}>
               <span
-                className={`font-display font-bold tracking-wider text-base sm:text-lg leading-tight transition-colors duration-200 ${
-                  isScrolled
+                className={`font-display font-bold tracking-tight sm:tracking-wider text-xs sm:text-base md:text-lg leading-tight truncate transition-colors duration-200 ${
+                  isScrolled || mobileMenuOpen
                     ? 'text-[#2D2319] group-hover:text-[#8C6D3B]'
-                    : 'text-[#FAF8F5] drop-shadow-[0_1px_2px_rgba(0,0,0,0.22)] group-hover:text-[#E7D4B3]'
+                    : 'text-[#FAF8F5] drop-shadow-[0_1px_2px_rgba(0,0,0,0.30)] group-hover:text-[#E7D4B3]'
                 }`}
               >
                 THE KHAOSAN POSHTEL
               </span>
               <span
-                className={`font-sans text-[10px] tracking-widest uppercase font-semibold transition-colors duration-200 ${
-                  isScrolled
+                className={`font-sans text-[9px] sm:text-[10px] tracking-widest uppercase font-semibold truncate hidden xs:block transition-colors duration-200 ${
+                  isScrolled || mobileMenuOpen
                     ? 'text-[#7A6A5C]'
                     : 'text-[#E7D4B3] drop-shadow-[0_1px_2px_rgba(0,0,0,0.40)]'
                 }`}
@@ -803,28 +803,30 @@ export default function App() {
             </a>
           </div>
 
-          {/* Mobile Right Controls: Language Switcher (ENG | THAI) + Menu Toggle */}
-          <div className={`md:hidden flex items-center gap-2.5 header-nav-reveal ${!isTransitionDone ? 'opacity-0 -translate-y-1' : 'opacity-100 translate-y-0'}`}>
-            <div className="flex items-center rounded-full bg-[#FAF8F5]/85 backdrop-blur-sm p-0.5 border border-[#2A5542]/30 shadow-xs">
+          {/* Mobile Right Controls: Compact Language Switcher (ENG | THAI) + Menu Toggle */}
+          <div className={`md:hidden flex items-center gap-1.5 sm:gap-2.5 flex-shrink-0 header-nav-reveal ${!isTransitionDone ? 'opacity-0 -translate-y-1' : 'opacity-100 translate-y-0'}`}>
+            <div className="flex items-center rounded-full bg-[#FAF8F5]/90 backdrop-blur-sm p-0.5 border border-[#2A5542]/30 shadow-xs">
               <button
                 type="button"
                 onClick={() => setLanguage('en')}
-                className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold transition-all ${
+                className={`px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-semibold transition-all cursor-pointer ${
                   language === 'en'
                     ? 'bg-[#2A5542] text-[#FAF8F5]'
                     : 'text-[#6A5A4D]'
                 }`}
+                aria-label="Switch language to English"
               >
                 ENG
               </button>
               <button
                 type="button"
                 onClick={() => setLanguage('th')}
-                className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold transition-all ${
+                className={`px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-semibold transition-all cursor-pointer ${
                   language === 'th'
                     ? 'bg-[#2A5542] text-[#FAF8F5]'
                     : 'text-[#6A5A4D]'
                 }`}
+                aria-label="Switch language to Thai"
               >
                 THAI
               </button>
@@ -833,15 +835,15 @@ export default function App() {
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className={`p-2 rounded-lg transition-colors ${
-                isScrolled
-                  ? 'text-[#2D2319] hover:bg-[#E7D4B3]/30'
-                  : 'text-[#FAF8F5] hover:bg-white/10'
+              className={`p-1.5 sm:p-2 rounded-xl transition-colors cursor-pointer min-w-[36px] min-h-[36px] flex items-center justify-center ${
+                isScrolled || mobileMenuOpen
+                  ? 'text-[#2D2319] hover:bg-[#E7D4B3]/30 active:bg-[#E7D4B3]/50'
+                  : 'text-[#FAF8F5] hover:bg-white/10 active:bg-white/20'
               }`}
               aria-label="Toggle navigation menu"
               aria-expanded={mobileMenuOpen}
             >
-              <svg className="w-6 h-6 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="2">
+              <svg className="w-5 h-5 sm:w-6 sm:h-6 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="2.2">
                 {mobileMenuOpen ? (
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                 ) : (
@@ -854,34 +856,67 @@ export default function App() {
 
         {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
-          <div className="md:hidden bg-[#FAF8F5]/98 backdrop-blur-xl border-b border-[#E7D4B3]/60 px-6 py-6 shadow-2xl animate-in slide-in-from-top-4 duration-200">
-            <div className="flex flex-col space-y-4">
-              {[
-                { id: 'about', label: t.about },
-                { id: 'stay', label: t.stay },
-                { id: 'experience', label: t.experience },
-                { id: 'location', label: t.location },
-              ].map((item) => (
-                <a
-                  key={item.id}
-                  href={`#${item.id}`}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="font-display font-medium text-base text-[#2D2319] hover:text-[#2A5542] py-2 border-b border-[#E7D4B3]/30"
-                >
-                  {item.label}
-                </a>
-              ))}
-              <div className="pt-3">
-                <a
-                  href="#book"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="w-full inline-flex items-center justify-center px-5 py-3 rounded-full bg-[#2A5542] text-[#FAF8F5] text-sm font-semibold tracking-wide shadow-md hover:bg-[#1E3E30]"
-                >
-                  {t.bookStay}
-                </a>
+          <>
+            <div
+              className="fixed inset-0 bg-[#0A1012]/40 backdrop-blur-xs z-30 md:hidden"
+              onClick={() => setMobileMenuOpen(false)}
+              aria-hidden="true"
+            />
+            <div className="relative z-40 md:hidden bg-[#FAF8F5]/98 backdrop-blur-xl border-b border-[#E7D4B3]/60 px-5 sm:px-6 py-5 shadow-2xl animate-in slide-in-from-top-4 duration-200">
+              <div className="flex flex-col space-y-3.5">
+                <div className="flex items-center justify-between pb-3 border-b border-[#E7D4B3]/40">
+                  <span className="text-[11px] uppercase tracking-widest text-[#7A6A5C] font-semibold">
+                    {language === 'en' ? 'Language' : 'ภาษา'}
+                  </span>
+                  <div className="flex items-center rounded-full bg-[#FAF8F5] p-0.5 border border-[#2A5542]/30 shadow-2xs">
+                    <button
+                      type="button"
+                      onClick={() => setLanguage('en')}
+                      className={`px-3 py-1 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+                        language === 'en' ? 'bg-[#2A5542] text-[#FAF8F5] shadow-xs' : 'text-[#6A5A4D]'
+                      }`}
+                    >
+                      English
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setLanguage('th')}
+                      className={`px-3 py-1 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+                        language === 'th' ? 'bg-[#2A5542] text-[#FAF8F5] shadow-xs' : 'text-[#6A5A4D]'
+                      }`}
+                    >
+                      ภาษาไทย
+                    </button>
+                  </div>
+                </div>
+                {[
+                  { id: 'about', label: t.about },
+                  { id: 'stay', label: t.stay },
+                  { id: 'experience', label: t.experience },
+                  { id: 'location', label: t.location },
+                ].map((item) => (
+                  <a
+                    key={item.id}
+                    href={`#${item.id}`}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="font-display font-medium text-base text-[#2D2319] hover:text-[#2A5542] py-2 border-b border-[#E7D4B3]/30 flex items-center justify-between"
+                  >
+                    <span>{item.label}</span>
+                    <span className="text-[#2A5542]/40 text-sm">→</span>
+                  </a>
+                ))}
+                <div className="pt-2">
+                  <a
+                    href="#book"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="w-full inline-flex items-center justify-center px-5 py-3 rounded-full bg-[#2A5542] text-[#FAF8F5] text-sm font-semibold tracking-wide shadow-md hover:bg-[#1E3E30] active:scale-98 transition-all"
+                  >
+                    {t.bookStay}
+                  </a>
+                </div>
               </div>
             </div>
-          </div>
+          </>
         )}
       </header>
 
@@ -934,7 +969,7 @@ export default function App() {
           ========================================================================= */}
       <section
         id="top"
-        className="relative w-full h-screen min-h-[640px] flex items-center justify-center overflow-hidden bg-[#0E1614] pt-16 pb-8"
+        className="relative w-full h-[100dvh] min-h-[580px] max-h-[1100px] flex items-center justify-center overflow-hidden bg-[#0E1614] pt-20 pb-10"
       >
         {/* Full-bleed background video with enhanced natural brightness */}
         <video
@@ -943,19 +978,22 @@ export default function App() {
           poster={POSTER_SRC}
           muted
           playsInline
+          webkit-playsinline="true"
+          x5-playsinline="true"
           preload="auto"
+          autoPlay
           onEnded={() => {
             if (videoRef.current) {
               videoRef.current.currentTime = LOOP_START;
               videoRef.current.play().catch(console.warn);
             }
           }}
-          className="hero-video absolute inset-0 z-0 pointer-events-none select-none brightness-110 contrast-[1.01] bg-[#E7D4B3]"
+          className="hero-video absolute inset-0 z-0 pointer-events-none select-none brightness-110 contrast-[1.01]"
         />
 
         {/* Localized blur and dark camouflage patch over the bottom-right Gemini watermark */}
         <div
-          className="absolute bottom-0 right-0 z-15 pointer-events-none w-56 h-32"
+          className="absolute bottom-0 right-0 z-15 pointer-events-none w-36 h-24 sm:w-56 sm:h-32"
           style={{
             backdropFilter: 'blur(16px)',
             WebkitBackdropFilter: 'blur(16px)',
@@ -967,7 +1005,7 @@ export default function App() {
         />
 
         {/* Bottom-right on-brand venue location pill that squarely covers the AI watermark */}
-        <div className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 z-20 pointer-events-none select-none">
+        <div className="hidden sm:block absolute bottom-4 right-4 sm:bottom-6 sm:right-6 z-20 pointer-events-none select-none">
           <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#11262B]/85 backdrop-blur-md border border-[#E7D4B3]/40 shadow-lg text-[#E7D4B3]">
             <span className="w-1.5 h-1.5 rounded-full bg-[#E7D4B3] animate-pulse" />
             <span className="font-sans text-[11px] tracking-wider uppercase font-semibold">
@@ -982,26 +1020,26 @@ export default function App() {
           style={{ backgroundImage: `url(${STATIC_HERO_BG})` }}
         />
 
-        {/* Clean, cinematic neutral dark scrim overlay - lightened for vibrant, clear natural ambiance */}
+        {/* Clean, cinematic neutral dark scrim overlay - perfectly balanced for legibility and ambiance */}
         <div
           className="absolute inset-0 z-10 pointer-events-none"
           style={{
             background:
-              'linear-gradient(180deg, rgba(10, 16, 18, 0.38) 0%, rgba(10, 16, 18, 0.18) 14%, rgba(10, 16, 18, 0.05) 28%, rgba(10, 16, 18, 0.00) 45%, rgba(10, 16, 18, 0.16) 72%, rgba(10, 16, 18, 0.46) 100%)',
+              'linear-gradient(180deg, rgba(10, 16, 18, 0.48) 0%, rgba(10, 16, 18, 0.22) 16%, rgba(10, 16, 18, 0.08) 32%, rgba(10, 16, 18, 0.08) 55%, rgba(10, 16, 18, 0.32) 78%, rgba(10, 16, 18, 0.65) 100%)',
           }}
         />
 
         {/* Hero Foreground Content - Optically centered on all display heights */}
         <div className="relative z-20 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col items-center">
-          <div className="hero-fade-in opacity-0 translate-y-8 will-change-transform inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FAF8F5]/85 backdrop-blur-sm border border-[#E7D4B3]/60 mb-5 shadow-sm">
+          <div className="hero-fade-in opacity-0 translate-y-8 will-change-transform inline-flex items-center gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-[#FAF8F5]/85 backdrop-blur-sm border border-[#E7D4B3]/60 mb-3.5 sm:mb-5 shadow-sm">
             <span className="w-2 h-2 rounded-full bg-[#2A5542] animate-pulse" />
-            <span className="text-xs font-semibold tracking-widest uppercase text-[#16373F]">
+            <span className="text-[11px] sm:text-xs font-semibold tracking-widest uppercase text-[#16373F]">
               {t.heroTag}
             </span>
           </div>
 
           <h1
-            className="hero-fade-in opacity-0 translate-y-8 will-change-transform font-display text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white max-w-3xl leading-[1.15]"
+            className="hero-fade-in opacity-0 translate-y-8 will-change-transform font-display text-2xl xs:text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white max-w-3xl leading-[1.18] sm:leading-[1.15]"
             style={{
               textShadow: '0 0 1px rgba(42, 85, 66, 0.55), 1px 0 1px rgba(42, 85, 66, 0.30), -1px 0 1px rgba(42, 85, 66, 0.30), 0 1px 1px rgba(42, 85, 66, 0.30), 0 -1px 1px rgba(42, 85, 66, 0.30)',
             }}
@@ -1010,7 +1048,7 @@ export default function App() {
           </h1>
 
           <p
-            className="hero-fade-in opacity-0 translate-y-8 will-change-transform mt-4 sm:mt-5 text-base sm:text-lg text-white max-w-2xl font-medium leading-relaxed"
+            className="hero-fade-in opacity-0 translate-y-8 will-change-transform mt-3 sm:mt-5 text-sm sm:text-lg text-white max-w-2xl font-medium leading-relaxed px-2 sm:px-0"
             style={{
               textShadow: '0 0 1px rgba(42, 85, 66, 0.40), 1px 0 1px rgba(42, 85, 66, 0.20), -1px 0 1px rgba(42, 85, 66, 0.20), 0 1px 6px rgba(0, 0, 0, 0.18)',
             }}
@@ -1018,16 +1056,16 @@ export default function App() {
             {t.heroSubheading}
           </p>
 
-          <div className="hero-fade-in opacity-0 translate-y-8 will-change-transform mt-8 flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+          <div className="hero-fade-in opacity-0 translate-y-8 will-change-transform mt-6 sm:mt-8 flex flex-col sm:flex-row items-center gap-3 sm:gap-4 w-full sm:w-auto px-4 sm:px-0">
             <a
               href="#book"
-              className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-[#E7D4B3] text-[#16373F] font-semibold text-sm tracking-wide shadow-lg hover:bg-[#F2ECE1] hover:scale-102 active:scale-98 transition-all duration-200"
+              className="w-full sm:w-auto px-7 py-3 sm:px-8 sm:py-3.5 rounded-full bg-[#E7D4B3] text-[#16373F] font-semibold text-sm tracking-wide shadow-lg hover:bg-[#F2ECE1] active:scale-98 transition-all duration-200 text-center cursor-pointer"
             >
               {t.bookStay}
             </a>
             <a
               href="#about"
-              className="w-full sm:w-auto px-7 py-3.5 rounded-full bg-white/20 backdrop-blur-md text-[#F8F5EE] border border-white/40 font-medium text-sm tracking-wide hover:bg-white/30 transition-all duration-200"
+              className="w-full sm:w-auto px-6 py-2.5 sm:px-7 sm:py-3.5 rounded-full bg-white/20 backdrop-blur-md text-[#F8F5EE] border border-white/40 font-medium text-sm tracking-wide hover:bg-white/30 active:scale-98 transition-all duration-200 text-center cursor-pointer"
             >
               {t.explorePoshtel}
             </a>
