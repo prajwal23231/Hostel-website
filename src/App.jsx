@@ -379,20 +379,20 @@ export default function App() {
 
     const tl = gsap.timeline();
 
-    // 1. Logo appears with a crisp fade and gentle settle
+    // 1. Logo appears with a calm fade and gentle settle
     tl.fromTo(
       floatingEl,
-      { opacity: 0, scale: 0.95 },
-      { opacity: 1, scale: 1.0, duration: 0.35, ease: 'power2.out' }
+      { opacity: 0, scale: 0.94 },
+      { opacity: 1, scale: 1.0, duration: 0.55, ease: 'power2.out' }
     )
-      // 2. Very brief pause to register the emblem
-      .to({}, { duration: 0.05 })
-      // 3. Smooth, swift glide and shrink into header slot
+      // 2. Poised breath to register the emblem
+      .to({}, { duration: 0.3 })
+      // 3. Luxurious, graceful glide and shrink into header slot
       .to(floatingEl, {
         x: deltaX,
         y: deltaY,
         scale: scaleFactor,
-        duration: 0.75,
+        duration: 1.25,
         ease: 'power2.inOut',
         force3D: true,
         onComplete: () => {
@@ -400,17 +400,17 @@ export default function App() {
           setIsTransitionDone(true);
         },
       })
-      // 4. Reveal navbar links and hero section in quick coordination
+      // 4. Reveal navbar links and hero section in smooth coordination
       .to(
         '.header-nav-reveal',
         {
           opacity: 1,
           y: 0,
-          duration: 0.3,
-          stagger: 0.02,
+          duration: 0.45,
+          stagger: 0.04,
           ease: 'power2.out',
         },
-        '-=0.25'
+        '-=0.4'
       )
       .fromTo(
         '.hero-fade-in',
@@ -421,21 +421,21 @@ export default function App() {
         {
           opacity: 1,
           y: 0,
-          duration: 0.5,
-          stagger: 0.05,
+          duration: 0.75,
+          stagger: 0.07,
           ease: 'power2.out',
         },
-        '<+=0.02'
+        '<+=0.04'
       )
       // Fade out floating copy right as header copy is immediately active
       .to(
         floatingEl,
         {
           opacity: 0,
-          duration: 0.05,
+          duration: 0.08,
           ease: 'none',
         },
-        '-=0.05'
+        '-=0.08'
       );
 
     return () => {
@@ -639,8 +639,8 @@ export default function App() {
           });
         },
         {
-          threshold: 0.1,
-          rootMargin: '0px 0px -40px 0px',
+          threshold: 0.01,
+          rootMargin: '0px 0px 180px 0px',
         }
       );
 
@@ -927,9 +927,9 @@ export default function App() {
           ========================================================================= */}
       <section
         id="top"
-        className="relative w-full h-[100dvh] min-h-[580px] max-h-[1100px] flex items-center justify-center overflow-hidden bg-[#0E1614] pt-20 pb-10"
+        className="relative w-full h-[100dvh] min-h-[580px] max-h-[1100px] flex items-center justify-center overflow-hidden bg-[#EFE7D8] pt-20 pb-10"
       >
-        {/* Full-bleed background video with enhanced natural brightness */}
+        {/* Full-bleed background video with vibrant sunny brightness */}
         <video
           ref={videoRef}
           src={VIDEO_SRC}
@@ -946,26 +946,27 @@ export default function App() {
               videoRef.current.play().catch(console.warn);
             }
           }}
-          className="hero-video absolute inset-0 z-0 pointer-events-none select-none brightness-110 contrast-[1.01]"
+          className="hero-video absolute inset-0 z-0 pointer-events-none select-none brightness-115 contrast-[1.02] saturate-[1.08]"
         />
 
-        {/* Localized blur and dark camouflage patch over the bottom-right Gemini watermark */}
+        {/* Localized blur and light camouflage patch over the bottom-right watermark - hidden on smaller screens when location is not displayed */}
         <div
-          className="absolute bottom-0 right-0 z-15 pointer-events-none w-36 h-24 sm:w-56 sm:h-32"
+          className="hidden sm:block absolute bottom-0 right-0 z-15 pointer-events-none w-36 h-24 sm:w-56 sm:h-32"
           style={{
-            backdropFilter: 'blur(16px)',
-            WebkitBackdropFilter: 'blur(16px)',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
             maskImage: 'radial-gradient(ellipse at 100% 100%, black 50%, transparent 85%)',
             WebkitMaskImage: 'radial-gradient(ellipse at 100% 100%, black 50%, transparent 85%)',
-            background: 'radial-gradient(ellipse at 100% 100%, rgba(14, 22, 20, 0.75) 0%, transparent 80%)',
+            background:
+              'radial-gradient(ellipse at 100% 100%, rgba(225, 210, 185, 0.40) 0%, rgba(235, 222, 198, 0.15) 50%, transparent 80%)',
           }}
           aria-hidden="true"
         />
 
-        {/* Bottom-right on-brand venue location pill that squarely covers the AI watermark */}
+        {/* Bottom-right on-brand venue location pill - light, warm, and elegant */}
         <div className="hidden sm:block absolute bottom-4 right-4 sm:bottom-6 sm:right-6 z-20 pointer-events-none select-none">
-          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#11262B]/85 backdrop-blur-md border border-[#E7D4B3]/40 shadow-lg text-[#E7D4B3]">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#E7D4B3] animate-pulse" />
+          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FAF8F5]/90 backdrop-blur-md border border-[#E7D4B3]/70 shadow-md text-[#16373F]">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#2A5542] animate-pulse" />
             <span className="font-sans text-[11px] tracking-wider uppercase font-semibold">
               Soi Rambuttri · Bangkok
             </span>
@@ -974,16 +975,16 @@ export default function App() {
 
         {/* Static poster fallback for reduced motion preference */}
         <div
-          className="absolute inset-0 z-0 bg-cover bg-center pointer-events-none hidden motion-reduce:block brightness-110"
+          className="absolute inset-0 z-0 bg-cover bg-center pointer-events-none hidden motion-reduce:block brightness-115"
           style={{ backgroundImage: `url(${STATIC_HERO_BG})` }}
         />
 
-        {/* Clean, cinematic neutral dark scrim overlay - perfectly balanced for legibility and ambiance */}
+        {/* Clean, bright sunny scrim overlay - perfectly balanced for legibility and vibrant daylight ambiance */}
         <div
           className="absolute inset-0 z-10 pointer-events-none"
           style={{
             background:
-              'linear-gradient(180deg, rgba(10, 16, 18, 0.48) 0%, rgba(10, 16, 18, 0.22) 16%, rgba(10, 16, 18, 0.08) 32%, rgba(10, 16, 18, 0.08) 55%, rgba(10, 16, 18, 0.32) 78%, rgba(10, 16, 18, 0.65) 100%)',
+              'linear-gradient(180deg, rgba(16, 35, 38, 0.20) 0%, rgba(16, 35, 38, 0.05) 18%, transparent 35%, transparent 65%, rgba(16, 35, 38, 0.08) 82%, rgba(16, 35, 38, 0.22) 100%)',
           }}
         />
 
@@ -1060,7 +1061,7 @@ export default function App() {
       {/* =========================================================================
           3. ABOUT SECTION (Full Bilingual English / Thai Support)
           ========================================================================= */}
-      <section id="about" className="py-24 sm:py-32 bg-[#F8F5EE] relative">
+      <section id="about" className="py-16 sm:py-24 bg-[#F8F5EE] relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
             {/* Visual Column: Authentic Artwork Card */}
