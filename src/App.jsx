@@ -51,9 +51,9 @@ const TRANSLATIONS = {
     aboutCardTitle: 'The Khaosan Poshtel Brand Artwork',
     aboutCardDesc: 'Celebrating tropical travel, freedom, and communal warmth in Phra Nakhon.',
     aboutP1:
-      'Nestled along the tree-lined pedestrian pathway of Soi Rambuttri, just moments from the world-famous Khaosan Road, The Khaosan Poshtel redefines boutique hostel living. We offer travelers an oasis of calm—warm sand tones, natural greenery, and thoughtful design that lets you recharge between Bangkok adventures.',
+      'Nestled along tree-lined Soi Rambuttri, steps from Khaosan Road, The Khaosan Poshtel offers a tranquil boutique sanctuary with warm sand tones and natural greenery to recharge between Bangkok adventures.',
     aboutP2:
-      'Operated by RK Hospitality Company Limited, our poshtel is built around hospitality, comfort, and community. Whether returning from ancient riverside temples or exploring lively night markets, you will find a relaxed haven to share stories, unwind, and feel right at home.',
+      'Operated by RK Hospitality Co., Ltd., we combine boutique comfort with vibrant communal spaces where travelers meet, unwind, and feel right at home.',
     pillar1Title: 'Tropical Calm',
     pillar1Desc: 'Warm woods, sand palettes, and airy spaces designed for peaceful restoration.',
     pillar2Title: 'Social Spirit',
@@ -184,9 +184,9 @@ const TRANSLATIONS = {
     aboutCardTitle: 'งานศิลปะแบรนด์ เดอะ ข้าวสาร พอชเทล',
     aboutCardDesc: 'เฉลิมฉลองการเดินทางสไตล์ทรอปิคอล อิสรภาพ และมิตรภาพอันอบอุ่นในย่านพระนคร',
     aboutP1:
-      'ณ ซอยรามบุตรี ถนนคนเดินอันร่มรื่นด้วยเงาไม้ ห่างจากถนนข้าวสารอันโด่งดังระดับโลกเพียงไม่กี่ก้าว เดอะ ข้าวสาร พอชเทล (The Khaosan Poshtel) ได้สร้างนิยามใหม่ให้กับการพักผ่อนแบบบูทีคโฮสเทล เรามอบโอเอซิสแห่งความสงบด้วยโทนสีทรายอบอุ่น แมกไม้เขียวขจี และการออกแบบที่พิถีพิถัน เพื่อให้คุณได้ชาร์จพลังระหว่างการผจญภัยในกรุงเทพฯ',
+      'ณ ซอยรามบุตรีอันร่มรื่น ใกล้ถนนข้าวสารเพียงไม่กี่ก้าว เดอะ ข้าวสาร พอชเทล มอบโอเอซิสแห่งความสงบด้วยดีไซน์บูทีคและโทนสีทรายอบอุ่น เพื่อการพักผ่อนอย่างแท้จริงระหว่างการเดินทางในกรุงเทพฯ',
     aboutP2:
-      'ดำเนินการโดย บริษัท อาร์เค ฮอสพิทอลลิตี้ จำกัด (RK Hospitality Company Limited) พอชเทลของเราสร้างขึ้นบนพื้นฐานของการต้อนรับ ความสะดวกสบาย และชุมชนนักเดินทาง ไม่ว่าจะกลับจากการเยี่ยมชมวัดวาอารามริมแม่น้ำเจ้าพระยา หรือสำรวจตลาดกลางคืนอันคึกคัก คุณจะได้พบกับพื้นที่ผ่อนคลายสำหรับแบ่งปันเรื่องราว พักผ่อน และรู้สึกอบอุ่นเหมือนอยู่บ้าน',
+      'ดำเนินการโดย บริษัท อาร์เค ฮอสพิทอลลิตี้ จำกัด เราผสานความสะดวกสบายและพื้นที่ส่วนกลางอันอบอุ่น เพื่อให้นักเดินทางได้พบปะ ผ่อนคลาย และรู้สึกเหมือนอยู่บ้าน',
     pillar1Title: 'ความสงบสไตล์ทรอปิคอล',
     pillar1Desc: 'งานไม้โทนอุ่น พาเลตต์สีทรายธรรมชาติ และพื้นที่โปร่งสบายเพื่อการพักผ่อนอย่างแท้จริง',
     pillar2Title: 'จิตวิญญาณแห่งมิตรภาพ',
@@ -358,8 +358,8 @@ export default function App() {
       setIsTransitionDone(true);
       gsap.fromTo(
         '.hero-fade-in',
-        { opacity: 0, y: 36, filter: 'blur(4px)' },
-        { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.85, stagger: 0.1, ease: 'power2.out' }
+        { opacity: 0, y: 24 },
+        { opacity: 1, y: 0, duration: 0.5, stagger: 0.06, ease: 'power2.out' }
       );
       return;
     }
@@ -379,65 +379,63 @@ export default function App() {
 
     const tl = gsap.timeline();
 
-    // 1. Logo appears with a subtle fade and gentle scale settle at moderate size
+    // 1. Logo appears with a crisp fade and gentle settle
     tl.fromTo(
       floatingEl,
-      { opacity: 0, scale: 0.94 },
-      { opacity: 1, scale: 1.0, duration: 0.5, ease: 'power2.out' }
+      { opacity: 0, scale: 0.95 },
+      { opacity: 1, scale: 1.0, duration: 0.35, ease: 'power2.out' }
     )
-      // 2. Brief breath to register the emblem
-      .to({}, { duration: 0.15 })
-      // 3. Smooth, continuous, restrained glide and shrink into header slot
+      // 2. Very brief pause to register the emblem
+      .to({}, { duration: 0.05 })
+      // 3. Smooth, swift glide and shrink into header slot
       .to(floatingEl, {
         x: deltaX,
         y: deltaY,
         scale: scaleFactor,
-        duration: 1.5,
-        ease: 'power1.inOut',
+        duration: 0.75,
+        ease: 'power2.inOut',
         force3D: true,
         onComplete: () => {
           // Seamlessly dock into header slot at exact moment logo finishes flight
           setIsTransitionDone(true);
         },
       })
-      // 4. Reveal navbar links AND hero section AT THE SAME TIME when logo is almost at its position
+      // 4. Reveal navbar links and hero section in quick coordination
       .to(
         '.header-nav-reveal',
         {
           opacity: 1,
           y: 0,
-          duration: 0.4,
-          stagger: 0.03,
+          duration: 0.3,
+          stagger: 0.02,
           ease: 'power2.out',
         },
-        '-=0.35'
+        '-=0.25'
       )
       .fromTo(
         '.hero-fade-in',
         {
           opacity: 0,
-          y: 36,
-          filter: 'blur(4px)',
+          y: 20,
         },
         {
           opacity: 1,
           y: 0,
-          filter: 'blur(0px)',
-          duration: 0.85,
-          stagger: 0.1,
+          duration: 0.5,
+          stagger: 0.05,
           ease: 'power2.out',
         },
-        '<+=0.04'
+        '<+=0.02'
       )
       // Fade out floating copy right as header copy is immediately active
       .to(
         floatingEl,
         {
           opacity: 0,
-          duration: 0.08,
+          duration: 0.05,
           ease: 'none',
         },
-        '-=0.08'
+        '-=0.05'
       );
 
     return () => {
@@ -451,7 +449,6 @@ export default function App() {
     if (!video) return;
 
     video.muted = true;
-    let loopRafId = null;
 
     // Helper: Seek back to loop start and continue playing
     const loopVideo = () => {
@@ -460,22 +457,6 @@ export default function App() {
         video.play().catch(console.warn);
       }
     };
-
-    // Continuous loop check: loops between LOOP_START (3.8s) and LOOP_END (7.0s)
-    const checkLoopPlayback = () => {
-      if (video && animStartedRef.current) {
-        if (video.currentTime >= LOOP_START) {
-          introPassedRef.current = true;
-        }
-        if (video.currentTime >= LOOP_END) {
-          loopVideo();
-        } else if (introPassedRef.current && video.currentTime < (LOOP_START - 0.5) && video.currentTime > 0) {
-          loopVideo();
-        }
-      }
-      loopRafId = requestAnimationFrame(checkLoopPlayback);
-    };
-    loopRafId = requestAnimationFrame(checkLoopPlayback);
 
     const handleTimeUpdate = () => {
       if (video.currentTime >= LOOP_START) {
@@ -540,12 +521,12 @@ export default function App() {
       }, { once: true });
     }
 
-    // Safety fallback: Avoid leaving loader indefinitely if network or browser stalls
+    // Safety fallback: Ensure page reveals quickly (350ms) even on slow mobile networks
     const fallbackTimer = setTimeout(() => {
       if (!started) {
         tryStartPlayback();
       }
-    }, 1800);
+    }, 350);
 
     // Visibility change handling
     const handleVisibilityChange = () => {
@@ -562,7 +543,6 @@ export default function App() {
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
-      if (loopRafId) cancelAnimationFrame(loopRafId);
       clearTimeout(fallbackTimer);
       video.removeEventListener('timeupdate', handleTimeUpdate);
       video.removeEventListener('ended', handleEnded);
@@ -691,17 +671,17 @@ export default function App() {
             : 'bg-gradient-to-b from-[#0A1012]/45 via-[#0A1012]/18 to-transparent border-transparent shadow-none py-1.5'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 h-18 sm:h-20 flex items-center justify-between gap-2">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-3">
           {/* Header Brand Area (Target for opening logo animation) */}
           <a
             href="#top"
-            className="flex items-center gap-2.5 sm:gap-3.5 group cursor-pointer min-w-0"
+            className="flex items-center gap-3 sm:gap-3.5 group cursor-pointer min-w-0"
             aria-label="The Khaosan Poshtel - Back to top"
           >
             {/* Target logo container slot */}
             <div
               ref={headerLogoTargetRef}
-              className="relative w-10 h-10 sm:w-12 sm:h-12 md:w-13 md:h-13 flex-shrink-0 flex items-center justify-center"
+              className="relative w-12 h-12 sm:w-13 sm:h-13 flex-shrink-0 flex items-center justify-center"
             >
               {/* Actual image asset revealed once transition completes without any delay or blink */}
               <img
@@ -717,7 +697,7 @@ export default function App() {
             {/* Brand Typography */}
             <div className={`flex flex-col min-w-0 header-nav-reveal ${!isTransitionDone ? 'opacity-0 -translate-y-1' : 'opacity-100 translate-y-0'}`}>
               <span
-                className={`font-display font-bold tracking-tight sm:tracking-wider text-xs sm:text-base md:text-lg leading-tight truncate transition-colors duration-200 ${
+                className={`font-display font-bold tracking-wider text-base sm:text-lg leading-tight truncate transition-colors duration-200 ${
                   isScrolled || mobileMenuOpen
                     ? 'text-[#2D2319] group-hover:text-[#8C6D3B]'
                     : 'text-[#FAF8F5] drop-shadow-[0_1px_2px_rgba(0,0,0,0.30)] group-hover:text-[#E7D4B3]'
@@ -726,7 +706,7 @@ export default function App() {
                 THE KHAOSAN POSHTEL
               </span>
               <span
-                className={`font-sans text-[9px] sm:text-[10px] tracking-widest uppercase font-semibold truncate hidden xs:block transition-colors duration-200 ${
+                className={`font-sans text-[10px] tracking-widest uppercase font-semibold truncate transition-colors duration-200 ${
                   isScrolled || mobileMenuOpen
                     ? 'text-[#7A6A5C]'
                     : 'text-[#E7D4B3] drop-shadow-[0_1px_2px_rgba(0,0,0,0.40)]'
@@ -803,39 +783,12 @@ export default function App() {
             </a>
           </div>
 
-          {/* Mobile Right Controls: Compact Language Switcher (ENG | THAI) + Menu Toggle */}
-          <div className={`md:hidden flex items-center gap-1.5 sm:gap-2.5 flex-shrink-0 header-nav-reveal ${!isTransitionDone ? 'opacity-0 -translate-y-1' : 'opacity-100 translate-y-0'}`}>
-            <div className="flex items-center rounded-full bg-[#FAF8F5]/90 backdrop-blur-sm p-0.5 border border-[#2A5542]/30 shadow-xs">
-              <button
-                type="button"
-                onClick={() => setLanguage('en')}
-                className={`px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-semibold transition-all cursor-pointer ${
-                  language === 'en'
-                    ? 'bg-[#2A5542] text-[#FAF8F5]'
-                    : 'text-[#6A5A4D]'
-                }`}
-                aria-label="Switch language to English"
-              >
-                ENG
-              </button>
-              <button
-                type="button"
-                onClick={() => setLanguage('th')}
-                className={`px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-semibold transition-all cursor-pointer ${
-                  language === 'th'
-                    ? 'bg-[#2A5542] text-[#FAF8F5]'
-                    : 'text-[#6A5A4D]'
-                }`}
-                aria-label="Switch language to Thai"
-              >
-                THAI
-              </button>
-            </div>
-
+          {/* Mobile Right Controls: Prominent Menu Toggle */}
+          <div className={`md:hidden flex items-center header-nav-reveal ${!isTransitionDone ? 'opacity-0 -translate-y-1' : 'opacity-100 translate-y-0'}`}>
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className={`p-1.5 sm:p-2 rounded-xl transition-colors cursor-pointer min-w-[36px] min-h-[36px] flex items-center justify-center ${
+              className={`p-2.5 rounded-xl transition-colors cursor-pointer min-w-[42px] min-h-[42px] flex items-center justify-center ${
                 isScrolled || mobileMenuOpen
                   ? 'text-[#2D2319] hover:bg-[#E7D4B3]/30 active:bg-[#E7D4B3]/50'
                   : 'text-[#FAF8F5] hover:bg-white/10 active:bg-white/20'
@@ -843,7 +796,7 @@ export default function App() {
               aria-label="Toggle navigation menu"
               aria-expanded={mobileMenuOpen}
             >
-              <svg className="w-5 h-5 sm:w-6 sm:h-6 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="2.2">
+              <svg className="w-6 h-6 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="2.2">
                 {mobileMenuOpen ? (
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                 ) : (
@@ -858,34 +811,39 @@ export default function App() {
         {mobileMenuOpen && (
           <>
             <div
-              className="fixed inset-0 bg-[#0A1012]/40 backdrop-blur-xs z-30 md:hidden"
+              className="fixed inset-0 bg-[#0A1012]/45 backdrop-blur-xs z-30 md:hidden"
               onClick={() => setMobileMenuOpen(false)}
               aria-hidden="true"
             />
-            <div className="relative z-40 md:hidden bg-[#FAF8F5]/98 backdrop-blur-xl border-b border-[#E7D4B3]/60 px-5 sm:px-6 py-5 shadow-2xl animate-in slide-in-from-top-4 duration-200">
-              <div className="flex flex-col space-y-3.5">
-                <div className="flex items-center justify-between pb-3 border-b border-[#E7D4B3]/40">
-                  <span className="text-[11px] uppercase tracking-widest text-[#7A6A5C] font-semibold">
-                    {language === 'en' ? 'Language' : 'ภาษา'}
+            <div className="relative z-40 md:hidden bg-[#FAF8F5]/98 backdrop-blur-xl border-b border-[#E7D4B3]/60 px-6 py-6 shadow-2xl animate-in slide-in-from-top-4 duration-200">
+              <div className="flex flex-col space-y-4">
+                {/* Language Switcher inside hamburger drawer */}
+                <div className="flex items-center justify-between pb-4 border-b border-[#E7D4B3]/40">
+                  <span className="text-xs uppercase tracking-widest text-[#7A6A5C] font-semibold">
+                    {language === 'en' ? 'Language / ภาษา' : 'ภาษา / Language'}
                   </span>
-                  <div className="flex items-center rounded-full bg-[#FAF8F5] p-0.5 border border-[#2A5542]/30 shadow-2xs">
+                  <div className="flex items-center rounded-full bg-[#FAF8F5] p-1 border border-[#2A5542]/30 shadow-xs">
                     <button
                       type="button"
                       onClick={() => setLanguage('en')}
-                      className={`px-3 py-1 rounded-full text-xs font-semibold transition-all cursor-pointer ${
-                        language === 'en' ? 'bg-[#2A5542] text-[#FAF8F5] shadow-xs' : 'text-[#6A5A4D]'
+                      className={`px-3.5 py-1 rounded-full text-xs font-semibold tracking-wide transition-all cursor-pointer ${
+                        language === 'en'
+                          ? 'bg-[#2A5542] text-[#FAF8F5] shadow-xs'
+                          : 'text-[#6A5A4D] hover:text-[#2A5542]'
                       }`}
                     >
-                      English
+                      ENG
                     </button>
                     <button
                       type="button"
                       onClick={() => setLanguage('th')}
-                      className={`px-3 py-1 rounded-full text-xs font-semibold transition-all cursor-pointer ${
-                        language === 'th' ? 'bg-[#2A5542] text-[#FAF8F5] shadow-xs' : 'text-[#6A5A4D]'
+                      className={`px-3.5 py-1 rounded-full text-xs font-semibold tracking-wide transition-all cursor-pointer ${
+                        language === 'th'
+                          ? 'bg-[#2A5542] text-[#FAF8F5] shadow-xs'
+                          : 'text-[#6A5A4D] hover:text-[#2A5542]'
                       }`}
                     >
-                      ภาษาไทย
+                      THAI
                     </button>
                   </div>
                 </div>
@@ -902,14 +860,14 @@ export default function App() {
                     className="font-display font-medium text-base text-[#2D2319] hover:text-[#2A5542] py-2 border-b border-[#E7D4B3]/30 flex items-center justify-between"
                   >
                     <span>{item.label}</span>
-                    <span className="text-[#2A5542]/40 text-sm">→</span>
+                    <span className="text-[#2A5542]/40 text-base">→</span>
                   </a>
                 ))}
                 <div className="pt-2">
                   <a
                     href="#book"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="w-full inline-flex items-center justify-center px-5 py-3 rounded-full bg-[#2A5542] text-[#FAF8F5] text-sm font-semibold tracking-wide shadow-md hover:bg-[#1E3E30] active:scale-98 transition-all"
+                    className="w-full inline-flex items-center justify-center px-5 py-3.5 rounded-full bg-[#2A5542] text-[#FAF8F5] text-sm font-semibold tracking-wide shadow-md hover:bg-[#1E3E30] active:scale-98 transition-all"
                   >
                     {t.bookStay}
                   </a>
@@ -1132,13 +1090,13 @@ export default function App() {
               <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-[#16373F] leading-tight">
                 {t.aboutHeading}
               </h2>
-              <div className="w-16 h-1 bg-[#E7D4B3] mt-5 mb-8 rounded-full" />
+              <div className="w-16 h-1 bg-[#E7D4B3] mt-4 mb-6 sm:mt-5 sm:mb-8 rounded-full" />
 
-              <p className="text-base sm:text-lg text-[#16373F]/80 leading-relaxed font-normal mb-6">
+              <p className="text-sm sm:text-base md:text-lg text-[#16373F]/85 leading-relaxed font-normal mb-4 sm:mb-6">
                 {t.aboutP1}
               </p>
 
-              <p className="text-base text-[#16373F]/75 leading-relaxed font-normal mb-10">
+              <p className="text-sm sm:text-base text-[#16373F]/75 leading-relaxed font-normal mb-6 sm:mb-8">
                 {t.aboutP2}
               </p>
 
@@ -1536,17 +1494,17 @@ export default function App() {
           </p>
 
           {/* Interactive Demo Reservation Box */}
-          <div className="bg-[#FFFFFF] text-[#16373F] rounded-2xl p-6 sm:p-10 shadow-2xl text-left border border-[#E7D4B3]/30 reveal-scale-on-scroll reveal-delay-1">
-            <div className="flex items-center justify-between pb-6 mb-6 border-b border-[#E7D4B3]/40">
-              <div>
-                <h3 className="font-display font-bold text-xl text-[#16373F]">
+          <div className="bg-[#FFFFFF] text-[#16373F] rounded-2xl p-5 sm:p-10 shadow-2xl text-left border border-[#E7D4B3]/30 reveal-scale-on-scroll reveal-delay-1 max-w-full overflow-hidden">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-5 mb-6 border-b border-[#E7D4B3]/40">
+              <div className="min-w-0">
+                <h3 className="font-display font-bold text-lg sm:text-xl text-[#16373F] truncate">
                   {t.bookFormTitle}
                 </h3>
                 <p className="text-xs text-[#63787D] mt-0.5">
                   92 Soi Rambutri, Talat Yot, Phra Nakhon, Bangkok 10200
                 </p>
               </div>
-              <span className="px-3 py-1 rounded-full bg-[#E7D4B3]/40 text-[#16373F] text-xs font-semibold">
+              <span className="self-start sm:self-auto px-3 py-1 rounded-full bg-[#E7D4B3]/40 text-[#16373F] text-xs font-semibold whitespace-nowrap">
                 {t.bookDemoBadge}
               </span>
             </div>
@@ -1581,48 +1539,48 @@ export default function App() {
                 className="space-y-6"
               >
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <div>
+                  <div className="min-w-0">
                     <label className="block text-xs font-semibold text-[#16373F] mb-1.5">
                       {t.bookCheckIn}
                     </label>
                     <input
                       type="date"
                       defaultValue="2026-10-15"
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#E7D4B3] text-sm text-[#16373F] focus:outline-none focus:ring-2 focus:ring-[#16373F]/30 bg-[#F8F5EE]"
+                      className="w-full min-w-0 max-w-full px-3.5 py-2.5 rounded-xl border border-[#E7D4B3] text-sm text-[#16373F] focus:outline-none focus:ring-2 focus:ring-[#16373F]/30 bg-[#F8F5EE]"
                       required
                     />
                   </div>
 
-                  <div>
+                  <div className="min-w-0">
                     <label className="block text-xs font-semibold text-[#16373F] mb-1.5">
                       {t.bookCheckOut}
                     </label>
                     <input
                       type="date"
                       defaultValue="2026-10-18"
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#E7D4B3] text-sm text-[#16373F] focus:outline-none focus:ring-2 focus:ring-[#16373F]/30 bg-[#F8F5EE]"
+                      className="w-full min-w-0 max-w-full px-3.5 py-2.5 rounded-xl border border-[#E7D4B3] text-sm text-[#16373F] focus:outline-none focus:ring-2 focus:ring-[#16373F]/30 bg-[#F8F5EE]"
                       required
                     />
                   </div>
 
-                  <div>
+                  <div className="min-w-0">
                     <label className="block text-xs font-semibold text-[#16373F] mb-1.5">
                       {t.bookRoomType}
                     </label>
                     <select
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#E7D4B3] text-sm text-[#16373F] focus:outline-none focus:ring-2 focus:ring-[#16373F]/30 bg-[#F8F5EE]"
+                      className="w-full min-w-0 max-w-full px-3.5 py-2.5 rounded-xl border border-[#E7D4B3] text-sm text-[#16373F] focus:outline-none focus:ring-2 focus:ring-[#16373F]/30 bg-[#F8F5EE]"
                     >
                       <option>{t.bookPrivateOption}</option>
                       <option>{t.bookDormOption}</option>
                     </select>
                   </div>
 
-                  <div>
+                  <div className="min-w-0">
                     <label className="block text-xs font-semibold text-[#16373F] mb-1.5">
                       {t.bookGuests}
                     </label>
                     <select
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#E7D4B3] text-sm text-[#16373F] focus:outline-none focus:ring-2 focus:ring-[#16373F]/30 bg-[#F8F5EE]"
+                      className="w-full min-w-0 max-w-full px-3.5 py-2.5 rounded-xl border border-[#E7D4B3] text-sm text-[#16373F] focus:outline-none focus:ring-2 focus:ring-[#16373F]/30 bg-[#F8F5EE]"
                     >
                       <option>{t.bookGuest1}</option>
                       <option>{t.bookGuest2}</option>
@@ -1631,13 +1589,13 @@ export default function App() {
                   </div>
                 </div>
 
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
-                  <p className="text-xs text-[#63787D]">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pt-2">
+                  <p className="text-xs text-[#63787D] text-center sm:text-left">
                     {t.bookNote}
                   </p>
                   <button
                     type="submit"
-                    className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-[#16373F] text-[#F8F5EE] text-sm font-semibold tracking-wide hover:bg-[#2A5542] shadow-md transition-colors cursor-pointer"
+                    className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-[#16373F] text-[#F8F5EE] text-sm font-semibold tracking-wide hover:bg-[#2A5542] shadow-md transition-colors cursor-pointer text-center"
                   >
                     {t.bookSubmitBtn}
                   </button>

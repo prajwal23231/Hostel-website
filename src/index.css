@@ -90,39 +90,32 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* =========================================================================
-   SCROLL-TRIGGERED FADE-IN & BLUR REVEAL MOTION
-   Elements smoothly fade, unblur, and rise into position as the user scrolls down
+   SCROLL-TRIGGERED FADE-IN MOTION (Optimized for 60-120fps mobile performance)
    ========================================================================= */
 .reveal-on-scroll {
   opacity: 0;
-  transform: translateY(32px);
-  filter: blur(4px);
-  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.85s cubic-bezier(0.16, 1, 0.3, 1),
-              filter 0.85s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: opacity, transform, filter;
+  transform: translateY(24px);
+  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
 }
 
 .reveal-on-scroll.is-revealed {
   opacity: 1;
   transform: translateY(0);
-  filter: blur(0px);
 }
 
 .reveal-scale-on-scroll {
   opacity: 0;
-  transform: scale(0.96) translateY(24px);
-  filter: blur(4px);
-  transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.9s cubic-bezier(0.16, 1, 0.3, 1),
-              filter 0.9s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: opacity, transform, filter;
+  transform: scale(0.97) translateY(18px);
+  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
 }
 
 .reveal-scale-on-scroll.is-revealed {
   opacity: 1;
   transform: scale(1) translateY(0);
-  filter: blur(0px);
 }
 
 /* Staggered entry timing for cards and grid items */
