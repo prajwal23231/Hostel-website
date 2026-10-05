@@ -595,11 +595,10 @@ export default function App() {
           1. HEADER (Appears after logo scale-down; translucent bar on scroll; ENG/THAI language toggle)
           ========================================================================= */}
       <header
-        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 pointer-events-auto ${
-          isScrolled || mobileMenuOpen
+        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 pointer-events-auto ${isScrolled || mobileMenuOpen
             ? 'bg-[#FAF8F5]/95 backdrop-blur-md border-b border-[#E7D4B3]/50 shadow-sm shadow-[#2D2319]/5 py-0'
             : 'bg-gradient-to-b from-[#0A1012]/45 via-[#0A1012]/18 to-transparent border-transparent shadow-none py-1.5'
-        }`}
+          }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-3">
           {/* Header Brand Area (Target for opening logo animation) */}
@@ -617,9 +616,8 @@ export default function App() {
               <img
                 src={LOGO_SRC}
                 alt="The Khaosan Poshtel"
-                className={`w-full h-full object-contain ${
-                  isTransitionDone ? 'opacity-100' : 'opacity-0'
-                }`}
+                className={`w-full h-full object-contain ${isTransitionDone ? 'opacity-100' : 'opacity-0'
+                  }`}
                 draggable={false}
               />
             </div>
@@ -627,20 +625,18 @@ export default function App() {
             {/* Brand Typography */}
             <div className={`flex flex-col min-w-0 header-nav-reveal ${!isTransitionDone ? 'opacity-0 -translate-y-1' : 'opacity-100 translate-y-0'}`}>
               <span
-                className={`font-display font-bold tracking-wider text-base sm:text-lg leading-tight truncate transition-colors duration-200 ${
-                  isScrolled || mobileMenuOpen
+                className={`font-display font-bold tracking-wider text-base sm:text-lg leading-tight truncate transition-colors duration-200 ${isScrolled || mobileMenuOpen
                     ? 'text-[#2D2319] group-hover:text-[#8C6D3B]'
                     : 'text-[#FAF8F5] drop-shadow-[0_1px_2px_rgba(0,0,0,0.30)] group-hover:text-[#E7D4B3]'
-                }`}
+                  }`}
               >
                 THE KHAOSAN POSHTEL
               </span>
               <span
-                className={`font-sans text-[10px] tracking-widest uppercase font-semibold truncate transition-colors duration-200 ${
-                  isScrolled || mobileMenuOpen
+                className={`font-sans text-[10px] tracking-widest uppercase font-semibold truncate transition-colors duration-200 ${isScrolled || mobileMenuOpen
                     ? 'text-[#7A6A5C]'
                     : 'text-[#E7D4B3] drop-shadow-[0_1px_2px_rgba(0,0,0,0.40)]'
-                }`}
+                  }`}
               >
                 {t.brandSubtitle}
               </span>
@@ -661,11 +657,10 @@ export default function App() {
               <a
                 key={item.id}
                 href={`#${item.id}`}
-                className={`font-medium text-sm tracking-wide transition-colors duration-200 relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#2A5542] hover:after:w-full after:transition-all after:duration-300 ${
-                  isScrolled
+                className={`font-medium text-sm tracking-wide transition-colors duration-200 relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#2A5542] hover:after:w-full after:transition-all after:duration-300 ${isScrolled
                     ? 'text-[#2D2319] hover:text-[#2A5542]'
                     : 'text-[#FAF8F5] drop-shadow-[0_1px_2px_rgba(0,0,0,0.22)] hover:text-[#E7D4B3]'
-                }`}
+                  }`}
               >
                 {item.label}
               </a>
@@ -679,11 +674,10 @@ export default function App() {
               <button
                 type="button"
                 onClick={() => setLanguage('en')}
-                className={`px-3 py-1 rounded-full text-xs font-semibold tracking-wide transition-all duration-200 cursor-pointer ${
-                  language === 'en'
+                className={`px-3 py-1 rounded-full text-xs font-semibold tracking-wide transition-all duration-200 cursor-pointer ${language === 'en'
                     ? 'bg-[#2A5542] text-[#FAF8F5] shadow-xs'
                     : 'text-[#6A5A4D] hover:text-[#2A5542]'
-                }`}
+                  }`}
                 aria-label="Switch language to English"
                 title="English"
               >
@@ -692,11 +686,10 @@ export default function App() {
               <button
                 type="button"
                 onClick={() => setLanguage('th')}
-                className={`px-3 py-1 rounded-full text-xs font-semibold tracking-wide transition-all duration-200 cursor-pointer ${
-                  language === 'th'
+                className={`px-3 py-1 rounded-full text-xs font-semibold tracking-wide transition-all duration-200 cursor-pointer ${language === 'th'
                     ? 'bg-[#2A5542] text-[#FAF8F5] shadow-xs'
                     : 'text-[#6A5A4D] hover:text-[#2A5542]'
-                }`}
+                  }`}
                 aria-label="Switch language to Thai"
                 title="ภาษาไทย"
               >
@@ -718,11 +711,10 @@ export default function App() {
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className={`p-2.5 rounded-xl transition-colors cursor-pointer min-w-[42px] min-h-[42px] flex items-center justify-center ${
-                isScrolled || mobileMenuOpen
+              className={`p-2.5 rounded-xl transition-colors cursor-pointer min-w-[42px] min-h-[42px] flex items-center justify-center ${isScrolled || mobileMenuOpen
                   ? 'text-[#2D2319] hover:bg-[#E7D4B3]/30 active:bg-[#E7D4B3]/50'
                   : 'text-[#FAF8F5] hover:bg-white/10 active:bg-white/20'
-              }`}
+                }`}
               aria-label="Toggle navigation menu"
               aria-expanded={mobileMenuOpen}
             >
@@ -756,22 +748,20 @@ export default function App() {
                     <button
                       type="button"
                       onClick={() => setLanguage('en')}
-                      className={`px-3.5 py-1 rounded-full text-xs font-semibold tracking-wide transition-all cursor-pointer ${
-                        language === 'en'
+                      className={`px-3.5 py-1 rounded-full text-xs font-semibold tracking-wide transition-all cursor-pointer ${language === 'en'
                           ? 'bg-[#2A5542] text-[#FAF8F5] shadow-xs'
                           : 'text-[#6A5A4D] hover:text-[#2A5542]'
-                      }`}
+                        }`}
                     >
                       ENG
                     </button>
                     <button
                       type="button"
                       onClick={() => setLanguage('th')}
-                      className={`px-3.5 py-1 rounded-full text-xs font-semibold tracking-wide transition-all cursor-pointer ${
-                        language === 'th'
+                      className={`px-3.5 py-1 rounded-full text-xs font-semibold tracking-wide transition-all cursor-pointer ${language === 'th'
                           ? 'bg-[#2A5542] text-[#FAF8F5] shadow-xs'
                           : 'text-[#6A5A4D] hover:text-[#2A5542]'
-                      }`}
+                        }`}
                     >
                       THAI
                     </button>
@@ -861,22 +851,21 @@ export default function App() {
           className="hero-video absolute inset-0 z-0 pointer-events-none select-none opacity-0 brightness-115 contrast-[1.02] saturate-[1.08]"
         />
 
-        {/* Localized very light feathered darkspot & gentle smooth blur over the bottom-right watermark - hidden on smaller screens */}
+        {/* Localized smooth blur box with rounded corners over the bottom-right watermark - hidden on smaller screens */}
         <div
-          className="hidden sm:block hero-address-reveal opacity-0 absolute bottom-0 right-0 z-15 pointer-events-none w-44 h-28 sm:w-60 sm:h-36"
+          className="watermark-camouflage hidden sm:block absolute bottom-0 right-0 z-20 pointer-events-none w-[225px] h-[108px] sm:w-[280px] sm:h-[136px] rounded-tl-3xl rounded-bl-2xl overflow-hidden"
           style={{
-            backdropFilter: 'blur(5px)',
-            WebkitBackdropFilter: 'blur(5px)',
-            maskImage: 'radial-gradient(ellipse at 100% 100%, black 25%, rgba(0,0,0,0.5) 55%, transparent 80%)',
-            WebkitMaskImage: 'radial-gradient(ellipse at 100% 100%, black 25%, rgba(0,0,0,0.5) 55%, transparent 80%)',
-            background:
-              'radial-gradient(ellipse at 100% 100%, rgba(16, 26, 23, 0.22) 0%, rgba(16, 26, 23, 0.09) 45%, transparent 75%)',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+            background: 'rgba(235, 222, 198, 0.16)',
+            borderTop: '1px solid rgba(255, 255, 255, 0.35)',
+            borderLeft: '1px solid rgba(255, 255, 255, 0.35)',
           }}
           aria-hidden="true"
         />
 
-        {/* Bottom-right on-brand venue location pill - sleek black glass aesthetic, animated with hero sequence, hidden on smaller screens */}
-        <div className="hidden sm:block absolute bottom-4 right-4 sm:bottom-6 sm:right-6 z-20 pointer-events-none select-none">
+        {/* Bottom-right on-brand venue location pill - sleek black glass aesthetic, animated with hero sequence, moved a little up */}
+        <div className="hidden sm:block absolute bottom-8 right-4 sm:bottom-12 sm:right-6 z-30 pointer-events-none select-none">
           <div className="hero-address-reveal opacity-0 translate-y-3 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#11262B]/90 backdrop-blur-md border border-[#E7D4B3]/35 shadow-lg text-[#E7D4B3]">
             <span className="w-1.5 h-1.5 rounded-full bg-[#34D399] animate-pulse" />
             <span className="font-sans text-[11px] tracking-wider uppercase font-semibold text-[#E7D4B3]">
